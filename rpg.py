@@ -427,8 +427,11 @@ def combat(players: list, enemies:list):
 
 # Commertiant handler
 def commertiant():
+    # Print options
+    print('\n1 - Mercador\n2 - Mercado\n3 - Mercadão\n4 - Ferreiro\n5 - Estábulo\n6 - Alquimista\n7 - Joalheria\n')
+
     # Get the commertiant type
-    option = input('Qual o tipo de comerciante: ').upper()
+    option = int(input('Qual o tipo de comerciante: '))
 
     print()
 
@@ -436,31 +439,45 @@ def commertiant():
     commertiant_items = list()
 
     # Merchant
-    if option == 'MERCADOR':
+    if option == 1:
+        print(25*'-=')
+        print(f'\n{bcolors.GREEN}MERCADOR{bcolors.ENDC}\n')
         commertiant_items = items.merchant_items
 
     # Market
-    elif option == 'MERCADO':
+    elif option == 2:
+        print(25*'-=')
+        print(f'\n{bcolors.GREEN}MERCADO{bcolors.ENDC}\n')
         commertiant_items = items.market_items
 
     # Big market
-    elif option == 'MERCADÃO' or option == 'MERCADAO':
+    elif option == 3:
+        print(25*'-=')
+        print(f'\n{bcolors.GREEN}MERCADÃO{bcolors.ENDC}\n')
         commertiant_items = items.big_market_items
 
     # Blacksmith
-    elif option == 'FERREIRO':
+    elif option == 4:
+        print(25*'-=')
+        print(f'\n{bcolors.GREEN}FERREIRO{bcolors.ENDC}\n')
         commertiant_items = items.blacksmith_items
 
     # Stable
-    elif option == 'ESTÁBULO' or option == 'ESTABULO':
+    elif option == 5:
+        print(25*'-=')
+        print(f'\n{bcolors.GREEN}ESTÁBULO{bcolors.ENDC}\n')
         commertiant_items = items.stable_items  
 
     # Alchemist
-    elif option == 'ALQUIMISTA':
+    elif option == 6:
+        print(25*'-=')
+        print(f'\n{bcolors.GREEN}ALQUIMISTA{bcolors.ENDC}\n')
         commertiant_items = items.alchemist_items
 
     # Jewelry
-    elif option == 'JOALHERIA':
+    elif option == 7:
+        print(25*'-=')
+        print(f'\n{bcolors.GREEN}JOALHERIA{bcolors.ENDC}\n')
         commertiant_items = items.jewelry_items
 
     # Show items and prices
@@ -482,6 +499,33 @@ def display_players(players: list):
 
 
 # Decision
+def decision():
+    master_dice_value = int(input('Valor do dado do mestre: '))
+    player_charisma = int(input('Carisma do jogador: '))
+    player_power = 0
+
+    while True:
+        player_charisma -= 15
+
+        if player_charisma >= 0:
+            player_power += 2
+        else:
+            break
+
+    master_dice = d(master_dice_value - player_power)
+    player_dice = d(20)
+
+    print(f'\nDado do {bcolors.RED}Mestre{bcolors.ENDC} (1d{master_dice_value - player_power}): {bcolors.RED}{master_dice}{bcolors.ENDC}')
+    print(f'Dado do {bcolors.GREEN}Jogador{bcolors.ENDC} (1d20): {bcolors.GREEN}{player_dice}{bcolors.ENDC}\n')
+
+    print(25*'-=')
+    print()
+
+    if player_dice >= master_dice:
+        print(f'A decisão do jogador {bcolors.GREEN}ACONTECE{bcolors.ENDC}')
+
+    else:
+        print(f'A decisão do jogador {bcolors.RED}FALHA{bcolors.ENDC}')
 
 
 # Clear screen
@@ -497,7 +541,7 @@ def clear():
 
 # Display main options
 def options():
-    print('1  - Adicionar jogador\n2  - Adicionar inimigo\n3  - Definir turno\n4  - Remover jogador\n5  - Remover inimigo\n6  - Limpar inimigos\n7  - Combate\n8  - Abrir baú\n9  - Compra e venda\n10 - Mostrar todos os personagens\n11 - Visualizar um jogador\n12 - Visualizar um inimigo\n0  - Sair\n')
+    print('1  - Adicionar jogador\n2  - Adicionar inimigo\n3  - Definir turno\n4  - Remover jogador\n5  - Remover inimigo\n6  - Limpar inimigos\n7  - Combate\n8  - Abrir baú\n9  - Compra e venda\n10 - Mostrar todos os personagens\n11 - Visualizar um jogador\n12 - Visualizar um inimigo\n13 - Decisão Probabilística\n0  - Sair\n')
 
 
 
@@ -658,6 +702,15 @@ if __name__ == '__main__':
 
             print()
             enemies[index].show_details()
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        elif choice == 13:
+            clear()
+            print('Decisão Probabilística\n')
+
+            decision()
 
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
