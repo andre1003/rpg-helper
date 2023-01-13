@@ -1,30 +1,45 @@
 from utils import bcolors
 
 
+class Item:
+    def __init__(self, name, description, additional_health, additional_mana,additional_stamina,
+    additional_attack_damage, additional_ability_power, additional_true_damage, 
+    additional_ad_negation, additional_ap_negation,
+    stamina_cost,
+    is_weapon):
+
+        self.name = name
+        self.description = description
+        
+        self.additional_health = additional_health
+        self.additional_mana = additional_mana
+        self.additional_stamina = additional_stamina
+
+        self.additional_attack_damage = additional_attack_damage
+        self.additional_ability_power = additional_ability_power
+        self.additional_true_damage = additional_true_damage
+
+        self.additional_ad_negation = additional_ad_negation
+        self.additional_ap_negation = additional_ap_negation
+
+        self.stamina_cost = stamina_cost
+
+        self.is_weapon = is_weapon
+
+
+
+
 items = {
     'Bárbaro': [
-        'Espada curva',
-        'Espada longa',
-        'Lança de pedra',
-        'Arco e flecha',
-
-        'Tanga simples',
-        'Ombreira de pele de urso',
-        'Perneiras de couro',
-        'Capuz de tecido simples',
+        Item('Machado Grande', '', 0, 0, 0, 3, 0, 0, 0, 0, 3, True),
+        Item('Adagas Curtas', '', 0, 0, 0, 1, 0, 0, 0, 0, 1, True),
+        Item('Armadura de Prata Pesada', '', 0, 0, 0, 0, 0, 0, 5, 5, 0, False),
     ],
 
 
     'Bardo': [
-        'Bandolim',
-        'Flauta',
-        'Violino',
-        'Macumba',
-
-        'Manto de bardo cortês',
-        'Manto de bardo de elite',
-        'Manto de bardo rasgado',
-        'Manto de fugitivo',
+        Item('Faca Pequena', '', 0, 0, 0, 1, 0, 0, 0, 0, 1, True),
+        Item('Roupa de Bardo', '', 0, 0, 0, 0, 0, 0, 1, 1, 0, False),
     ],
     
     
@@ -34,49 +49,21 @@ items = {
     
     
     'Druida': [
-        'Faca',
-        'Adaga curta',
-        'Lança',
-        'Bastão de madeira',
-
-        'Manto de lã simples',
-        'Manto de couro',
-        'Roupas de camponês',
-        'Roupas nobres',
+        Item('Trapo Simples', '', 0, 0, 0, 0, 0, 0, 0, 2, 0, False),
     ],
     
     
     'Mago': [
-        'Cajado de madeira Ancestral',
-        'Cajado de osso',
-        'Cajado de ferro',
-        'Orbe simples',
-
-        'Manto ragasdo',
-        'Manto de mago da floresta',
-        'Manto de mago de elite',
-        'Manto de mago da água',
+        Item('Cajado Simples', '', 0, 0, 0, 0, 2, 0, 0, 0, 2, True),
+        Item('Manto Furado', '', 0, 0, 0, 0, 0, 0, 1, 2, 0, False),
     ],
     
     
     'Paladino': [
-        'Escudo grande',
-        'Espada longa',
-        'Alabarda',
-        'Machado grande',
-
-        'Armadura dourada',
-        'Armadura de bronze de elite',
-        'Armadura de couro leve',
-        'Armadura real de Smargdus',
+        Item('Espada Média', '', 0, 0, 0, 5, 0, 0, 0, 0, 3, True),
+        Item('Escudo Médio', '', 0, 0, 0, 0, 0, 0, 5, 4, 0, False),
     ],
 }
-
-
-def get_item_at_index(character_class:str , index: int):
-    return items[character_class][index]
-
-
 
 
 merchant_items = [
@@ -173,6 +160,14 @@ item_levels= (
 )
 
 
+
+
+# Get player item at index
+def get_item_at_index(character_class:str , index: int):
+    return items[character_class][index]
+
+
+# Create an item
 def create_item():
     name = input('Insira o nome do item: ')
     description = input('Insira a descrição do item: ')

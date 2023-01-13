@@ -4,50 +4,6 @@ from ability import Ability
 
 # Character class
 class Character:
-    # # Name
-    # name = "Generic Name"
-
-    # # Class
-    # character_class = ""
-
-    # # Status
-    # health = 100
-    # mana = 100
-    # stamina = 100
-
-    # # Base Status
-    # base_health = 100
-    # base_mana = 100
-    # base_stamina = 100
-
-    # # Damage
-    # attack_damage = 0
-    # ability_power = 0
-    # true_damage = 0
-
-    # # Base Damage
-    # base_attack_damage = 0
-    # base_ability_power = 0
-    # base_true_damage = 0
-
-    # # Damage negation
-    # attack_damage_negation = 0
-    # ability_power_negation = 0
-
-    # # Attack dice
-    # attack_dice_number = 1
-    # attack_dice_value = 6
-
-    # # Defence dice
-    # defense_dice_number = 1
-    # defense_dice_value = 6
-
-    # # Additional dice for ability
-    # additional_ability_dice = 1
-
-    
-
-
     # Constructor
     def __init__(self, name, character_class, health, mana, stamina, attack_damage, ability_power, true_damage, attack_damage_negation, ability_power_negation, attack_dice_number, attack_dice_value, defense_dice_number, defense_dice_value, additional_ability_dice):
         self.name = name

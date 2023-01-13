@@ -12,7 +12,7 @@ def d(number: int):
 
 
 # Calculate damage
-def calculate_damage(attacker: Character, defender: Character, is_heavy_attack: bool):
+def calculate_damage(attacker: Character, defender: Character, is_heavy_attack: bool, stamina_cost: int):
     print(25*'=-')
 
     print(f'{bcolors.GREEN}{attacker.name}{bcolors.ENDC} X {bcolors.RED}{defender.name}{bcolors.ENDC}\n\n')
@@ -71,7 +71,7 @@ def calculate_damage(attacker: Character, defender: Character, is_heavy_attack: 
         return 0
 
     # Remove stamina cost
-    attacker.stamina -= (5 * attack_intensity_multiplier)
+    attacker.stamina -= (stamina_cost * attack_intensity_multiplier)
 
     # Declare AD and AP final damage variables
     ad_damage = 0
@@ -108,7 +108,7 @@ def calculate_damage(attacker: Character, defender: Character, is_heavy_attack: 
     aux = 'Tipo de Ataque: Básico'
     if is_heavy_attack:
         aux = 'Tipo de Ataque: Pesado (dano dobrado)'
-    print(f'{bcolors.GREEN}{attacker.name}{bcolors.ENDC} aplicou:\n\tDano do Ataque: {ad_damage}\n\tDano Mágico: {ap_damage}\n\tDano Verdadeiro: {td_damage}\n\t{aux}\n\t{bcolors.RED}Dano Total: {final_damage}{bcolors.ENDC}')
+    print(f'{bcolors.GREEN}{attacker.name}{bcolors.ENDC} aplicou:\n\tDano do Ataque: {ad_damage}\n\tDano Mágico: {ap_damage}\n\tDano Verdadeiro: {td_damage}\n\t{aux}\n\t{bcolors.RED}Dano Total: {final_damage}{bcolors.ENDC}\n{bcolors.GREEN}\tGasto de Stamina: {(stamina_cost * attack_intensity_multiplier)}{bcolors.ENDC}')
 
     print(25*'=-')
 
@@ -117,6 +117,9 @@ def calculate_damage(attacker: Character, defender: Character, is_heavy_attack: 
 
 
 def calculate_damage_ability(attacker: Character, defender: Character, ability: Ability, players: list, current_turn: int, current_combat_abilities: list):
+    print()
+    print(25*'-=')
+    
     # Get dice number, if needed
     dice_number = 0
     if not ability.no_dice:
@@ -131,7 +134,9 @@ def calculate_damage_ability(attacker: Character, defender: Character, ability: 
 
     # If ability did not cast
     if not ability.check_success(dice_value):
-        print('A habilidade falhou no casting...\n')
+        print(f'\n{bcolors.RED}A habilidade falhou no casting...{bcolors.ENDC}\n')
+        print()
+        print(25*'-=')
         return 0
 
     # If ability is unic use and have already been used
@@ -142,7 +147,9 @@ def calculate_damage_ability(attacker: Character, defender: Character, ability: 
             break
 
     if ability.is_unic_use and was_ability_used:
-        print('A habilidade já foi utilizada!\n')
+        print('\nA habilidade já foi utilizada!\n')
+        print()
+        print(25*'-=')
         return 0
 
     # Check this ability last use
@@ -155,12 +162,16 @@ def calculate_damage_ability(attacker: Character, defender: Character, ability: 
     if last_ability_use > 0:
         turn_difference = current_turn - last_ability_use
         if turn_difference <= 0 or turn_difference < ability.cooldown:
-            print('A habilidade ainda está em cooldown!\n')
+            print('\nA habilidade ainda está em cooldown!\n')
+            print()
+            print(25*'-=')
             return 0
 
     # If player can cast the ability
     if attacker.health <= ability.health_cost or attacker.mana < ability.mana_cost or attacker.stamina < ability.stamina_cost:
-        print(f'{attacker.name} não pode castar a habilidade. Não cumpre os requisitos de casting!\n')
+        print(f'\n{attacker.name} não pode castar a habilidade. Não cumpre os requisitos de casting!\n')
+        print()
+        print(25*'-=')
         return 0
     
     # Remove ability cost
@@ -178,7 +189,7 @@ def calculate_damage_ability(attacker: Character, defender: Character, ability: 
             player.buff_damage(ability.additional_attack_damage, ability.additional_ability_power, ability.additional_true_damage)
 
     if not ability.is_attack:
-        print(f'A habilidade {bcolors.CYAN}{ability.name}{bcolors.ENDC} não ataca, portanto nenhum dano será causado!')
+        print(f'\nA habilidade {bcolors.CYAN}{ability.name}{bcolors.ENDC} não ataca, portanto nenhum dano será causado!')
         return 0
 
     # Declare AD, AP and TD final damage variables
@@ -189,10 +200,10 @@ def calculate_damage_ability(attacker: Character, defender: Character, ability: 
 
     # If the defender armor was greater than attacker AD, set ad_damage to 0
     if ad_damage < 0:
-        print(f'{bcolors.RED}{defender.name}{bcolors.ENDC} defendeu o Dano de Ataque!')
+        print(f'\n{bcolors.RED}{defender.name}{bcolors.ENDC} defendeu o Dano de Ataque!')
         ad_damage = 0
     else:
-        print(f'{bcolors.GREEN}{attacker.name}{bcolors.ENDC} acertou o Dano de Ataque!')
+        print(f'\n{bcolors.GREEN}{attacker.name}{bcolors.ENDC} acertou o Dano de Ataque!')
     
     # If the defender armor was greater than attacker AP, set ap_damage to 0
     if ap_damage < 0:
@@ -437,16 +448,64 @@ def loot_chest():
     input('\nPressione qualquer tecla para continuar...')
 
 
+# Edit a character
+def edit(all_characters: list):
+    print()
+    print(25*'-=')
+    print()
+
+    for i in range(len(all_characters)):
+        print(f'{i} - {all_characters[i].name}')
+
+    option = int(input('\nQual personagem voce quer alterar: '))
+
+    character = all_characters[option]
+
+    # Status
+    health = int(input('Adicionar Vida: '))
+    mana = int(input('Adicionar Mana: '))
+    stamina = int(input('Adicionar Stamina: '))
+
+    # Damage
+    attack_damage = int(input('Adicionar Dano de Ataque: '))
+    ability_power = int(input('Adicionar Dano Mágico: '))
+    true_damage = int(input('Adicionar Dano Verdadeiro: '))
+
+    character.buff_status(health, mana, stamina)
+    character.buff_damage(attack_damage, ability_power, true_damage)
+
+    print()
+    print(25*'-=')
+    print()
+
+
 # Combat handler
 def combat(current_turn: int, players: list, enemies: list, current_combat_abilities: list):
     # Get all characters
-    all_chacters = players.copy() + enemies.copy()
+    all_characters = players.copy() + enemies.copy()
 
+    # Edit a character, if needed
+    opt = 2
+    while opt == 2:
+        opt = int(input('1 - Iniciar a Luta\n2 - Alterar o Status de Personagem\n\nSua Escolha: '))
+        if opt == 2:
+            edit(all_characters)
+
+        elif opt == -2:
+            return -2
+
+        else:
+            print()
+            print(25*'-=')
+            print()
+
+
+    # Start combat
     print('Iniciando o combate. Os combatentes são:\n')
             
     # Display it on screen
-    for i in range(len(all_chacters)):
-        print(f'{i} - {all_chacters[i].name}')
+    for i in range(len(all_characters)):
+        print(f'{i} - {all_characters[i].name}')
 
     print()
 
@@ -454,8 +513,10 @@ def combat(current_turn: int, players: list, enemies: list, current_combat_abili
     attacker_index = int(input('Escolha o atacante: '))
     if attacker_index == -1:
         return
-    attacker = all_chacters[attacker_index]
-    defender = all_chacters[int(input('Escolha o defensor: '))]
+    elif attacker_index == -2:
+        return -2
+    attacker = all_characters[attacker_index]
+    defender = all_characters[int(input('Escolha o defensor: '))]
 
     print()
 
@@ -464,7 +525,7 @@ def combat(current_turn: int, players: list, enemies: list, current_combat_abili
 
     # If the attacker have any ability, check if it will use it or not
     if len(attacker.character_abilities) > 0:
-        op = int(input('O atacante usará uma abilidade? [1 - True/0 - False]: '))
+        op = int(input('O atacante usará uma habilidade? [1 - True/0 - False]: '))
         if op == 1:
             print('\nHabilidades do atacante:\n')
             for i in range(len(attacker.character_abilities)):
@@ -482,7 +543,40 @@ def combat(current_turn: int, players: list, enemies: list, current_combat_abili
         if option == 1:
             is_heavy_attack = True
 
-        damage += calculate_damage(attacker, defender, is_heavy_attack)
+        additional_ad = 0
+        additional_ap = 0
+        additional_td = 0
+        stamina_cost = 2
+        if attacker in enemies:
+            stamina_cost = 0
+
+        if attacker.character_class in items.items:
+            print(f'{bcolors.GREEN}Armas do Atacante{bcolors.ENDC}\n')
+            attacker_items = list()
+            for char_class in items.items:
+                if char_class == attacker.character_class:
+                    attacker_items = items.items[char_class]
+
+            count = 0
+            for i in range(len(attacker_items)):
+                if attacker_items[i].is_weapon:
+                    print(f'{i} - {attacker_items[i].name}')
+                    count+=1
+
+            if count == 0:
+                print(f'{bcolors.RED}O atacante não tem nenhum arma!{bcolors.ENDC}')
+            else:
+                option = int(input('\nQual arma o atacante usará: '))
+
+                additional_ad = attacker_items[option].additional_attack_damage
+                additional_ap = attacker_items[option].additional_ability_power
+                additional_td = attacker_items[option].additional_true_damage
+                stamina_cost = attacker_items[option].stamina_cost
+
+                attacker.buff_damage(additional_ad, additional_ap, additional_td)
+
+        damage += calculate_damage(attacker, defender, is_heavy_attack, stamina_cost)
+        attacker.debuff_damage(additional_ad, additional_ap, additional_td)
     else:
         print()
         print(25*'-=')
@@ -497,8 +591,8 @@ def combat(current_turn: int, players: list, enemies: list, current_combat_abili
             enemies.remove(defender)
             del(defender)
 
-            xp = randint(int(input('Mínimo de XP: ')), int(input('Máximo de XP: ')))
-            coins = randint(int(input('\nMínimo de Moedas: ')), int(input('Máximo de Moedas: ')))
+            xp = randint(int(input('Mínimo de XP: ') or 10), int(input('Máximo de XP: ') or 20))
+            coins = randint(int(input('\nMínimo de Moedas: ') or 0), int(input('Máximo de Moedas: ') or 0))
 
             print()
             print(25*'-=')
@@ -526,8 +620,15 @@ def assign_ability(abilities: list, character: Character):
 # Remove all temporary buffs
 def remove_buffs(current_combat_abilities: list, players: list):
     for ability in current_combat_abilities:
-        for player in players:
-            player.debuff_damage(ability[1].additional_attack_damage, ability[1].additional_ability_power, ability[1].additional_true_damage)
+        if not ability[1].is_attack:
+            for player in players:
+                player.debuff_damage(ability[1].additional_attack_damage, ability[1].additional_ability_power, ability[1].additional_true_damage)
+
+
+# Reset stamina of all players
+def reset_stamina(players: list):
+    for player in players:
+        player.stamina = player.base_stamina
 
 
 # Commertiant handler
@@ -692,7 +793,31 @@ def clear():
 
 # Display main options
 def options():
-    print('1  - Adicionar jogador\n2  - Adicionar inimigo\n3  - Definir turno\n4  - Remover jogador\n5  - Remover inimigo\n6  - Limpar inimigos\n7  - Combate\n8  - Abrir baú\n9  - Compra e venda\n10 - Mostrar todos os personagens\n11 - Visualizar um jogador\n12 - Visualizar um inimigo\n13 - Decisão Probabilística\n14 - Adicionar Habilidade\n15 - Listar Habilidades Existentes\n16 - Atribuir Habilidade\n17 - Adicionar Item\n0  - Sair\n')
+    print(
+    f'{bcolors.CYAN}'+
+    f'1  - Criar jogador\n'
+    f'2  - Criar inimigo\n'+
+    f'3  - Criar habilidade\n'+
+    f'4  - Criar Item\n\n'+
+    f'{bcolors.RED}'+
+    f'5  - Excluir jogador\n'+
+    f'6  - Excluir inimigo\n'+
+    f'7  - Excluir todos os inimigos\n\n'+
+    f'{bcolors.GREEN}'+
+    f'8  - Visualizar todos os personagens\n'+
+    f'9  - Visualizar um jogador\n'+
+    f'10 - Visualizar um inimigo\n'+
+    f'11 - Visualizar todas as habilidades\n\n'+
+    f'{bcolors.ENDC}'+
+    f'12 - Atribuir Habilidade\n'+
+    f'13 - Combate\n'+
+    f'14 - Compra e venda\n'+
+    f'15 - Abrir baú\n'+
+    f'16 - Definir turno\n'+
+    f'17 - Decisão probabilística\n\n'+
+
+    f'0  - Sair\n'
+    )
 
 
 
@@ -740,17 +865,28 @@ if __name__ == '__main__':
                 
             enemies.append(new_enemy)
 
-        # Define turn order
+        # Create an ability
         elif choice == 3:
             clear()
-            print('Definição de Turno\n')
-            define_order(players, enemies)
+            print('Nova Habilidade\n')
+
+            abilities.append(create_ability())
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        # Create Item
+        elif choice == 4:
+            clear()
+            print('Criar Item\n')
+
+            items.create_item()
 
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
 
         # Remove a player
-        elif choice == 4:
+        elif choice == 5:
             clear()
             print('Remoção de Jogador')
             
@@ -764,7 +900,7 @@ if __name__ == '__main__':
             input('\nPressione qualquer tecla para continuar...')
 
         # Remove an enemy
-        elif choice == 5:
+        elif choice == 6:
             clear()
             print('Remoção de Inimigo')
             
@@ -777,8 +913,8 @@ if __name__ == '__main__':
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
 
-        # Clean enemies list
-        elif choice == 6:
+        # Remove all enemies
+        elif choice == 7:
             clear()
             print('Limpar Lista de Inimigos')
 
@@ -786,9 +922,100 @@ if __name__ == '__main__':
 
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
+
+        # See all character
+        elif choice == 8:
+            clear()
+
+            if players:
+                print(f'{bcolors.GREEN}Jogadores{bcolors.ENDC}\n')
+                
+                for player in players:
+                    print(player.name)
+
+            if enemies:
+                print(f'\n{bcolors.RED}Inimigos{bcolors.ENDC}\n')
+
+                for enemy in enemies:
+                    print(enemy.name)
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        # See a player
+        elif choice == 9:
+            clear()
+            print('Visualizar Jogador\n')
+
+            for i in range(len(players)):
+                print(f'{i} - {players[i].name}')
             
+            index = int(input('\nQual jogador você deseja ver os detalhes [-1 para voltar]: '))
+
+            if index == -1:
+                continue
+
+            print()
+            players[index].show_details()
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        # See an enemy
+        elif choice == 10:
+            clear()
+            print('Visualizar Inimigo\n')
+
+            for i in range(len(enemies)):
+                print(f'{i} - {enemies[i].name}')
+            
+            index = int(input('\nQual inimigo você deseja ver os detalhes [-1 para voltar]: '))
+
+            if index == -1:
+                continue
+
+            print()
+            enemies[index].show_details()
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        # See all abilities
+        elif choice == 11:
+            clear()
+            print('Todas as Habilidades\n')
+
+            for ability in abilities:
+                print(ability.name)
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        # Assign ability
+        elif choice == 12:
+            clear()
+            print('Atribuir Habilidade\n')
+
+            if int(input('Atribuir a um jogador? [1 - True/0 - False]: ')) == 1:                
+                print('\nJogadores para atribuir:\n')
+                for i in range(len(players)):
+                    print(f'{i} - {players[i].name}')
+
+                index = int(input('\nJogador para atribuir: '))                                               
+                assign_ability(abilities, players[index])
+            else:
+                print('\nInimigos para atribuir:\n')
+                for i in range(len(enemies)):
+                    print(f'{i} - {enemies[i].name}')
+
+                index = int(input('\nInimigo para atribuir: '))
+                assign_ability(abilities, enemies[index])
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
         # Combat
-        elif choice == 7:
+        elif choice == 13:
             current_turn = 0
             current_combat_abilities = list()
 
@@ -848,7 +1075,9 @@ if __name__ == '__main__':
 
 
                 # Combat handler
-                combat(current_turn, players, enemies, current_combat_abilities)
+                result = combat(current_turn, players, enemies, current_combat_abilities)
+                if result == -2:
+                    break
 
                 # Increase player order index
                 index += 1
@@ -857,80 +1086,33 @@ if __name__ == '__main__':
                 if not enemies:
                     break
 
-            # Remove all temporary buffs, given by the abilities
+            # Remove all temporary buffs, given by the abilities, and reset stamina
             remove_buffs(current_combat_abilities, players)
+            reset_stamina(players)
                       
-        # Open a chest
-        elif choice == 8:
-            clear()
-            print('Abrir Baú')
-            loot_chest()
-
         # Buy and sell system
-        elif choice == 9:
+        elif choice == 14:
             clear()
             print('Compra e Venda')
             commertiant()
 
-        # Display all character
-        elif choice == 10:
+        # Open a chest
+        elif choice == 15:
             clear()
+            print('Abrir Baú')
+            loot_chest()
 
-            if players:
-                print(f'{bcolors.GREEN}Jogadores{bcolors.ENDC}\n')
-                
-                for player in players:
-                    print(player.name)
-
-            if enemies:
-                print(f'\n{bcolors.RED}Inimigos{bcolors.ENDC}\n')
-
-                for enemy in enemies:
-                    print(enemy.name)
-
-            # Press any key to continue
-            input('\nPressione qualquer tecla para continuar...')
-
-        # See a player
-        elif choice == 11:
+        # Define turn order
+        elif choice == 16:
             clear()
-            print('Visualizar Jogador\n')
-
-            for i in range(len(players)):
-                print(f'{i} - {players[i].name}')
-            
-            index = int(input('\nQual jogador você deseja ver os detalhes [-1 para voltar]: '))
-
-            if index == -1:
-                continue
-
-            print()
-            players[index].show_details()
-
-            # Press any key to continue
-            input('\nPressione qualquer tecla para continuar...')
-
-        # See an enemy
-        elif choice == 12:
-            clear()
-            print('Visualizar Inimigo\n')
-
-            for i in range(len(enemies)):
-                print(f'{i} - {enemies[i].name}')
-            
-            index = int(input('\nQual inimigo você deseja ver os detalhes [-1 para voltar]: '))
-
-            if index == -1:
-                continue
-
-            print()
-            enemies[index].show_details()
+            print('Definição de Turno\n')
+            define_order(players, enemies)
 
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
 
         # Probabilistic decision
-        elif choice == 13:
+        elif choice == 17:
             clear()
             print('Decisão Probabilística\n')
 
@@ -939,55 +1121,5 @@ if __name__ == '__main__':
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
 
-        # Create an ability
-        elif choice == 14:
-            clear()
-            print('Nova Habilidade\n')
 
-            abilities.append(create_ability())
 
-            # Press any key to continue
-            input('\nPressione qualquer tecla para continuar...')
-
-        # Show abilities
-        elif choice == 15:
-            clear()
-            print('Todas as Habilidades\n')
-
-            for ability in abilities:
-                print(ability.name)
-
-            # Press any key to continue
-            input('\nPressione qualquer tecla para continuar...')
-
-        # Assign ability
-        elif choice == 16:
-            clear()
-            print('Atribuir Habilidade\n')
-
-            if int(input('Atribuir a um jogador? [1 - True/0 - False]: ')) == 1:                
-                print('\nJogadores para atribuir:\n')
-                for i in range(len(players)):
-                    print(f'{i} - {players[i].name}')
-
-                index = int(input('\nJogador para atribuir: '))                                               
-                assign_ability(abilities, players[index])
-            else:
-                print('\nInimigos para atribuir:\n')
-                for i in range(len(enemies)):
-                    print(f'{i} - {enemies[i].name}')
-
-                index = int(input('\nInimigo para atribuir: '))
-                assign_ability(abilities, enemies[index])
-
-            # Press any key to continue
-            input('\nPressione qualquer tecla para continuar...')
-
-        elif choice == 17:
-            clear()
-            print('Criar Item\n')
-
-            items.create_item()
-
-            # Press any key to continue
-            input('\nPressione qualquer tecla para continuar...')
