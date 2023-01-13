@@ -251,7 +251,7 @@ def create_players():
     celaena = Character("Celaena", "Bardo", 42, 50, 11, 10, 15, 2, 5, 5, 1, 8, 1, 8, 1)
     ryze = Character("Ryze", "Mago", 73, 34, 49, 8, 13, 4, 3, 7, 1, 6, 1, 6, 1)
     flugel = Character("Flugel", "Paladino", 93, 14, 32, 20, 18, 6, 7, 3, 1, 10, 1, 10, 1)
-
+    
     # Return players
     return  [spark, nikolag, celaena, ryze, flugel]
 
@@ -269,12 +269,24 @@ def create_enemies():
 
 
 # Create known abilities
-def create_abilities():
-    simple_heal = Ability('Cura Simples', 0, 15, 0, 0, 0, 0, 25, 0, 0, True, 0, True, 0, True, False, 3)
-    simple_orb = Ability('Orbe Simples', 0, 20, 5, 0, 35, 5, 0, 0, 0, False, 1, False, 0, False, True, 3)
-    mortal_fingering = Ability('Dedilhado Mortal', 0, 15, 5, 25, 25, 5, 0, 0, 0, True, 0, True, 0, True, False, 0)
+def create_abilities(players: list):
+    invisibility = Ability('Invisibilidade', 0, 15, 0, 0, 0, 0, 0, 0, 0, True, 0, False, 0, True, False, 3)
+    enchanting_beauty = Ability('Beleza Encantadora', 0, 13, 2, 0, 0, 0, 0, 0, 0, True, 0, False, 0, False, False, 3)
+    mortal_fingering = Ability('Dedilhado Mortal', 0, 10, 5, 5, 5, 10, 0, 0, 0, True, 0, True, 0, True, False, 0)
+    heavy_strike = Ability('Corte Pesado', 0, 2, 7, 13, 2, 5, 0, 0, 0, False, 1, False, 1, False, True, 4)
+    barbarian_roar = Ability('Rugido Bárbaro', 0, 0, 15, 15, 0, 5, 0, 0, 0, False, 1, False, 1, False, True, 4)
+    simple_orb = Ability('Orbe Simples', 0, 15, 0, 0, 15, 5, 0, 0, 0, False, 1, False, 0, False, True, 3)
+    simple_call = Ability('Chamado Simples', 0, 5, 10, 10, 5, 5, 0, 0, 0, False, 1, False, 1, False, True, 3)
 
-    return [simple_heal, simple_orb, mortal_fingering]
+    players[0].add_ability(invisibility)
+    players[0].add_ability(enchanting_beauty)
+    players[1].add_ability(heavy_strike)
+    players[1].add_ability(barbarian_roar)
+    players[2].add_ability(mortal_fingering)
+    players[3].add_ability(simple_orb)
+    players[4].add_ability(simple_call)
+
+    return [invisibility, enchanting_beauty, heavy_strike, barbarian_roar, mortal_fingering, simple_orb, simple_call]
 
 
 # Create a random enemy
@@ -439,7 +451,10 @@ def combat(current_turn: int, players: list, enemies: list, current_combat_abili
     print()
 
     # Get the attacker and the defender
-    attacker = all_chacters[int(input('Escolha o atacante: '))]
+    attacker_index = int(input('Escolha o atacante: '))
+    if attacker_index == -1:
+        return
+    attacker = all_chacters[attacker_index]
     defender = all_chacters[int(input('Escolha o defensor: '))]
 
     print()
@@ -515,7 +530,6 @@ def remove_buffs(current_combat_abilities: list, players: list):
             player.debuff_damage(ability[1].additional_attack_damage, ability[1].additional_ability_power, ability[1].additional_true_damage)
 
 
-
 # Commertiant handler
 def commertiant():
     # Print options
@@ -573,8 +587,8 @@ def commertiant():
 
     # Show items and prices
     for item in commertiant_items:
-        price = f'{item[1]:,}'.replace(',', '.')
-        print(f'{item[0]} - ${price}')
+        price = f'{item[2]:,}'.replace(',', '.')
+        print(f'{bcolors.CYAN}{item[0]}{bcolors.ENDC} - {bcolors.YELLOW}${price}{bcolors.ENDC}\n{item[1]}\n')
 
     # Press any key to continue
     input('\nPressione qualquer tecla para continuar...')
@@ -583,8 +597,9 @@ def commertiant():
 # Display all players
 def display_players(players: list):
     print('Jogadores existentes:\n')
+    print(f'Nome\t\t   {bcolors.RED}Vida\t\t   {bcolors.CYAN}Mana\t\t {bcolors.GREEN}Stamina{bcolors.ENDC}\t AD\t AP\t TD\n')
     for player in players:
-        print(player.name)
+        print(f'{player.name}\t\t{bcolors.RED}{player.health:3d} / {player.base_health:3d}\t{bcolors.CYAN}{player.mana:3d} / {player.base_mana:3d}\t{bcolors.GREEN}{player.stamina:3d} / {player.base_stamina:3d}{bcolors.ENDC}\t{player.attack_damage:3d}\t{player.ability_power:3d}\t{player.true_damage:3d}')
 
     print('\n')
 
@@ -677,7 +692,7 @@ def clear():
 
 # Display main options
 def options():
-    print('1  - Adicionar jogador\n2  - Adicionar inimigo\n3  - Definir turno\n4  - Remover jogador\n5  - Remover inimigo\n6  - Limpar inimigos\n7  - Combate\n8  - Abrir baú\n9  - Compra e venda\n10 - Mostrar todos os personagens\n11 - Visualizar um jogador\n12 - Visualizar um inimigo\n13 - Decisão Probabilística\n14 - Adicionar Habilidade\n15 - Listar Habilidades Existentes\n16 - Atribuir Habilidade\n0  - Sair\n')
+    print('1  - Adicionar jogador\n2  - Adicionar inimigo\n3  - Definir turno\n4  - Remover jogador\n5  - Remover inimigo\n6  - Limpar inimigos\n7  - Combate\n8  - Abrir baú\n9  - Compra e venda\n10 - Mostrar todos os personagens\n11 - Visualizar um jogador\n12 - Visualizar um inimigo\n13 - Decisão Probabilística\n14 - Adicionar Habilidade\n15 - Listar Habilidades Existentes\n16 - Atribuir Habilidade\n17 - Adicionar Item\n0  - Sair\n')
 
 
 
@@ -687,7 +702,7 @@ if __name__ == '__main__':
     print(bcolors.ENDC)
     players = create_players()
     enemies = create_enemies()
-    abilities = create_abilities()
+    abilities = create_abilities(players)
 
     while(True):
         clear()
@@ -814,14 +829,14 @@ if __name__ == '__main__':
 
                 # Display all players info
                 print(f'\n{bcolors.GREEN}Jogadores{bcolors.ENDC}\n')
-
+                print(f'   {bcolors.RED}Vida\t\t   {bcolors.CYAN}Mana\t\t {bcolors.GREEN}Stamina{bcolors.ENDC}\t AD\t AP\t TD\tNome\n')
                 for player in players:
                     print(f'{bcolors.RED}{player.health:3d} / {player.base_health:3d}\t{bcolors.CYAN}{player.mana:3d} / {player.base_mana:3d}\t{bcolors.GREEN}{player.stamina:3d} / {player.base_stamina:3d}{bcolors.ENDC}\t{player.attack_damage:3d}\t{player.ability_power:3d}\t{player.true_damage:3d}\t{player.name}')
 
 
                 # Display all enemies info
                 print(f'\n{bcolors.RED}Inimigos{bcolors.ENDC}\n')
-
+                print(f'   {bcolors.RED}Vida\t\t   {bcolors.CYAN}Mana\t\t {bcolors.GREEN}Stamina{bcolors.ENDC}\t AD\t AP\t TD\tNome\n')
                 for enemy in enemies:
                     print(f'{bcolors.RED}{enemy.health:3d} / {enemy.base_health:3d}\t{bcolors.CYAN}{enemy.mana:3d} / {enemy.base_mana:3d}\t{bcolors.GREEN}{enemy.stamina:3d} / {enemy.base_stamina:3d}{bcolors.ENDC}\t{enemy.attack_damage:3d}\t{enemy.ability_power:3d}\t{enemy.true_damage:3d}\t{enemy.name}')
 
@@ -844,8 +859,7 @@ if __name__ == '__main__':
 
             # Remove all temporary buffs, given by the abilities
             remove_buffs(current_combat_abilities, players)
-                
-            
+                      
         # Open a chest
         elif choice == 8:
             clear()
@@ -965,6 +979,15 @@ if __name__ == '__main__':
 
                 index = int(input('\nInimigo para atribuir: '))
                 assign_ability(abilities, enemies[index])
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        elif choice == 17:
+            clear()
+            print('Criar Item\n')
+
+            items.create_item()
 
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
