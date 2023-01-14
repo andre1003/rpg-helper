@@ -256,15 +256,42 @@ def create_character():
 
 # Create known players
 def create_players():
-    # Create players
-    spark = Character("Spark", "Druida", 59, 39, 59, 7, 29, 5, 5, 7, 1, 8, 1, 8, 1)
-    nikolag = Character("Nikolag", "Bárbaro", 43, 33, 22, 16, 7, 5, 7, 3, 1, 12, 1, 12, 1)
-    celaena = Character("Celaena", "Bardo", 42, 50, 11, 10, 15, 2, 5, 5, 1, 8, 1, 8, 1)
-    ryze = Character("Ryze", "Mago", 73, 34, 49, 8, 13, 4, 3, 7, 1, 6, 1, 6, 1)
-    flugel = Character("Flugel", "Paladino", 93, 14, 32, 20, 18, 6, 7, 3, 1, 10, 1, 10, 1)
+    players = list()
+    path = 'saves/'
+
+    if not os.path.exists(path):
+        # Create players
+        spark = Character("Spark", "Druida", 59, 39, 59, 7, 29, 5, 5, 7, 1, 8, 1, 8, 1)
+        nikolag = Character("Nikolag", "Bárbaro", 43, 33, 22, 16, 7, 5, 7, 3, 1, 12, 1, 12, 1)
+        celaena = Character("Celaena", "Bardo", 42, 50, 11, 10, 15, 2, 5, 5, 1, 8, 1, 8, 1)
+        ryze = Character("Ryze", "Mago", 73, 34, 49, 8, 13, 4, 3, 7, 1, 6, 1, 6, 1)
+        flugel = Character("Flugel", "Paladino", 93, 14, 32, 20, 18, 6, 7, 3, 1, 10, 1, 10, 1)
+        
+        players = [spark, nikolag, celaena, ryze, flugel]
+
+        for player in players:
+            player.coins = 500
+            player.xp = 785
     
+    else:
+        for directory in os.listdir(path):
+            file = open(f'{path + directory}/player.txt', 'r')
+            content = file.readlines()
+            file.close()
+
+            for i in range(len(content)):
+                content[i] = content[i].replace('\n', '')
+                if i > 1:
+                    content[i] = int(content[i])
+
+            new_player = Character(content[0], content[1], content[2], content[3], content[4], content[5], content[6], content[7], content[8], content[9], content[10], content[11], content[12], content[13], content[14])
+            new_player.coins = content[15]
+            new_player.xp = content[16]
+
+            players.append(new_player)
+            
     # Return players
-    return  [spark, nikolag, celaena, ryze, flugel]
+    return  players
 
 
 # Create some random enemies
@@ -597,6 +624,10 @@ def combat(current_turn: int, players: list, enemies: list, current_combat_abili
             print()
             print(25*'-=')
             print(f'\nRecompensas\n\n{bcolors.CYAN}+{xp} XP{bcolors.ENDC}\n{bcolors.WARNING}+{coins} moedas{bcolors.ENDC}')
+
+            for player in players:
+                player.coins += coins
+                player.xp += xp
         else:
             print(f'\n{bcolors.GREEN}{defender.name} {bcolors.RED}morreu!{bcolors.ENDC}')
 
@@ -632,67 +663,88 @@ def reset_stamina(players: list):
 
 
 # Commertiant handler
-def commertiant():
-    # Print options
-    print('\n1 - Mercador\n2 - Mercado\n3 - Mercadão\n4 - Ferreiro\n5 - Estábulo\n6 - Alquimista\n7 - Joalheria\n')
+def commertiant(players: list):
+    while True:
+        clear()
+        print('Compra e Venda')
+        # Print options
+        print('\n1 - Mercador\n2 - Mercado\n3 - Mercadão\n4 - Ferreiro\n5 - Estábulo\n6 - Alquimista\n7 - Joalheria\n')
 
-    # Get the commertiant type
-    option = int(input('Qual o tipo de comerciante: '))
+        # Get the commertiant type
+        option = int(input('Qual o tipo de comerciante: '))
 
-    print()
+        print()
 
-    # Init commertiant items
-    commertiant_items = list()
+        # Init commertiant items
+        commertiant_items = list()
 
-    # Merchant
-    if option == 1:
-        print(25*'-=')
-        print(f'\n{bcolors.GREEN}MERCADOR{bcolors.ENDC}\n')
-        commertiant_items = items.merchant_items
+        # Merchant
+        if option == 1:
+            print(25*'-=')
+            print(f'\n{bcolors.GREEN}MERCADOR{bcolors.ENDC}\n')
+            commertiant_items = items.merchant_items
 
-    # Market
-    elif option == 2:
-        print(25*'-=')
-        print(f'\n{bcolors.GREEN}MERCADO{bcolors.ENDC}\n')
-        commertiant_items = items.market_items
+        # Market
+        elif option == 2:
+            print(25*'-=')
+            print(f'\n{bcolors.GREEN}MERCADO{bcolors.ENDC}\n')
+            commertiant_items = items.market_items
 
-    # Big market
-    elif option == 3:
-        print(25*'-=')
-        print(f'\n{bcolors.GREEN}MERCADÃO{bcolors.ENDC}\n')
-        commertiant_items = items.big_market_items
+        # Big market
+        elif option == 3:
+            print(25*'-=')
+            print(f'\n{bcolors.GREEN}MERCADÃO{bcolors.ENDC}\n')
+            commertiant_items = items.big_market_items
 
-    # Blacksmith
-    elif option == 4:
-        print(25*'-=')
-        print(f'\n{bcolors.GREEN}FERREIRO{bcolors.ENDC}\n')
-        commertiant_items = items.blacksmith_items
+        # Blacksmith
+        elif option == 4:
+            print(25*'-=')
+            print(f'\n{bcolors.GREEN}FERREIRO{bcolors.ENDC}\n')
+            commertiant_items = items.blacksmith_items
 
-    # Stable
-    elif option == 5:
-        print(25*'-=')
-        print(f'\n{bcolors.GREEN}ESTÁBULO{bcolors.ENDC}\n')
-        commertiant_items = items.stable_items  
+        # Stable
+        elif option == 5:
+            print(25*'-=')
+            print(f'\n{bcolors.GREEN}ESTÁBULO{bcolors.ENDC}\n')
+            commertiant_items = items.stable_items  
 
-    # Alchemist
-    elif option == 6:
-        print(25*'-=')
-        print(f'\n{bcolors.GREEN}ALQUIMISTA{bcolors.ENDC}\n')
-        commertiant_items = items.alchemist_items
+        # Alchemist
+        elif option == 6:
+            print(25*'-=')
+            print(f'\n{bcolors.GREEN}ALQUIMISTA{bcolors.ENDC}\n')
+            commertiant_items = items.alchemist_items
 
-    # Jewelry
-    elif option == 7:
-        print(25*'-=')
-        print(f'\n{bcolors.GREEN}JOALHERIA{bcolors.ENDC}\n')
-        commertiant_items = items.jewelry_items
+        # Jewelry
+        elif option == 7:
+            print(25*'-=')
+            print(f'\n{bcolors.GREEN}JOALHERIA{bcolors.ENDC}\n')
+            commertiant_items = items.jewelry_items
 
-    # Show items and prices
-    for item in commertiant_items:
-        price = f'{item[2]:,}'.replace(',', '.')
-        print(f'{bcolors.CYAN}{item[0]}{bcolors.ENDC} - {bcolors.YELLOW}${price}{bcolors.ENDC}\n{item[1]}\n')
+        # Show items and prices
+        index = 0
+        for item in commertiant_items:
+            price = f'{item.price:,}'.replace(',', '.')
+            print(f'{index} - {bcolors.CYAN}{item.name}{bcolors.ENDC} - {bcolors.YELLOW}${price}{bcolors.ENDC}\n{item.description}\n')
+            index += 1
 
-    # Press any key to continue
-    input('\nPressione qualquer tecla para continuar...')
+        option = int(input('\nQual item o jogador deseja adicionar: '))
+        if option != -1:
+            print()
+            for i in range(len(players)):
+                print(f'{i} - {players[i].name}')
+            opt = int(input('\nQual jogador quer comprar o item: '))
+
+            if players[opt].coins >= commertiant_items[option].price:
+                players[opt].coins -= commertiant_items[option].price
+                items.items[players[opt].character_class].append(commertiant_items[option])
+                print(f'{bcolors.CYAN}{commertiant_items[option].name}{bcolors.ENDC} adicionado ao inventário de {bcolors.GREEN}{players[opt].name}{bcolors.ENDC}')
+
+        option = int(input('\nDeseja continuar comprando? [1 - True/0 - False]:  ') or 1)
+
+        if option == 0:
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+            break
 
 
 # Display all players
@@ -780,6 +832,40 @@ def create_ability():
     return Ability(name, health_cost, mana_cost, stamina_cost, additional_attack_damage, additional_ability_power, additional_true_damage, additional_health, additional_mana, additional_stamina, is_unic_use, cooldown, affect_other_player, number_of_enemies_affected, no_dice, is_attack, min_dice_value)
 
 
+# Show all players invetories
+def show_inventories(players: list):
+    for player in players:
+        print(f'Inventário de {bcolors.GREEN}{player.name}{bcolors.ENDC}\n')
+        print(f'\t{bcolors.CYAN}XP: {player.xp}{bcolors.ENDC}\n\t{bcolors.YELLOW}Moedas: {player.coins}{bcolors.ENDC}\n')
+        for item in items.items[player.character_class]:
+            price = f' - {bcolors.YELLOW}SEM PREÇO{bcolors.ENDC}'
+            if item.price != -1:
+                price = f' - {bcolors.YELLOW}${item.price:,}{bcolors.ENDC}'.replace(',', '.')
+            description = item.description or '[Item sem descrição]'
+            print(f'\t{bcolors.CYAN}{item.name}{bcolors.ENDC}{price}\n\t{description}\n')
+        print(25*'-=')
+        print()
+
+
+# Save game data
+def save(players: list):
+    for player in players:
+        path = f'saves/{player.name}/'
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+        file = open(f'{path}player.txt', 'w')
+        file.writelines(player.get_data())
+        file.close()
+
+        for ability in player.character_abilities:
+            name = ability.name.replace(' ','_')
+            file = open(f'{path}/{name}.txt', 'w')
+            file.writelines(ability.get_data())
+            file.close()
+        
+
+
 # Clear screen
 def clear():
     # Clearing the Screen
@@ -807,14 +893,16 @@ def options():
     f'8  - Visualizar todos os personagens\n'+
     f'9  - Visualizar um jogador\n'+
     f'10 - Visualizar um inimigo\n'+
-    f'11 - Visualizar todas as habilidades\n\n'+
+    f'11 - Visualizar todas as habilidades\n'+
+    f'12 - Visualizar inventários\n\n'+
     f'{bcolors.ENDC}'+
-    f'12 - Atribuir Habilidade\n'+
-    f'13 - Combate\n'+
-    f'14 - Compra e venda\n'+
-    f'15 - Abrir baú\n'+
-    f'16 - Definir turno\n'+
-    f'17 - Decisão probabilística\n\n'+
+    f'13 - Atribuir Habilidade\n'+
+    f'14 - Combate\n'+
+    f'15 - Compra e venda\n'+
+    f'16 - Abrir baú\n'+
+    f'17 - Definir turno\n'+
+    f'18 - Decisão probabilística\n\n'+
+    
 
     f'0  - Sair\n'
     )
@@ -836,7 +924,7 @@ if __name__ == '__main__':
 
         options()
 
-        choice = int(input('Sua escolha: '))
+        choice = int(input('Sua escolha: ') or 0)
         
         # Exit
         if choice == 0:
@@ -991,8 +1079,17 @@ if __name__ == '__main__':
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
 
-        # Assign ability
         elif choice == 12:
+            clear()
+            print('Inventários\n')
+
+            show_inventories(players)
+            
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        # Assign ability
+        elif choice == 13:
             clear()
             print('Atribuir Habilidade\n')
 
@@ -1015,7 +1112,7 @@ if __name__ == '__main__':
             input('\nPressione qualquer tecla para continuar...')
 
         # Combat
-        elif choice == 13:
+        elif choice == 14:
             current_turn = 0
             current_combat_abilities = list()
 
@@ -1091,19 +1188,17 @@ if __name__ == '__main__':
             reset_stamina(players)
                       
         # Buy and sell system
-        elif choice == 14:
-            clear()
-            print('Compra e Venda')
-            commertiant()
+        elif choice == 15:
+            commertiant(players)
 
         # Open a chest
-        elif choice == 15:
+        elif choice == 16:
             clear()
             print('Abrir Baú')
             loot_chest()
 
         # Define turn order
-        elif choice == 16:
+        elif choice == 17:
             clear()
             print('Definição de Turno\n')
             define_order(players, enemies)
@@ -1112,7 +1207,7 @@ if __name__ == '__main__':
             input('\nPressione qualquer tecla para continuar...')
 
         # Probabilistic decision
-        elif choice == 17:
+        elif choice == 18:
             clear()
             print('Decisão Probabilística\n')
 
@@ -1121,5 +1216,13 @@ if __name__ == '__main__':
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
 
+        elif choice == 19:
+            clear()
+            print('Savando Dados...\n')
 
+            save(players)
 
+            print('Dados salvos!\n')
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')

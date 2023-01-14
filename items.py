@@ -2,14 +2,16 @@ from utils import bcolors
 
 
 class Item:
-    def __init__(self, name, description, additional_health, additional_mana,additional_stamina,
-    additional_attack_damage, additional_ability_power, additional_true_damage, 
-    additional_ad_negation, additional_ap_negation,
-    stamina_cost,
-    is_weapon):
+    def __init__(self, name, description='', price=-1,
+    additional_health=0, additional_mana=0, additional_stamina=0,
+    additional_attack_damage=0, additional_ability_power=0, additional_true_damage=0, 
+    additional_ad_negation=0, additional_ap_negation=0,
+    stamina_cost=0,
+    is_weapon=False):
 
         self.name = name
         self.description = description
+        self.price = price
         
         self.additional_health = additional_health
         self.additional_mana = additional_mana
@@ -31,15 +33,15 @@ class Item:
 
 items = {
     'Bárbaro': [
-        Item('Machado Grande', '', 0, 0, 0, 3, 0, 0, 0, 0, 3, True),
-        Item('Adagas Curtas', '', 0, 0, 0, 1, 0, 0, 0, 0, 1, True),
-        Item('Armadura de Prata Pesada', '', 0, 0, 0, 0, 0, 0, 5, 5, 0, False),
+        Item(name='Machado Grande', additional_attack_damage=3, stamina_cost=3, is_weapon=True),
+        Item(name='Adagas Curtas', additional_attack_damage=1, stamina_cost=1, is_weapon=True),
+        Item(name='Armadura de Prata Pesada', additional_ad_negation=5, additional_ap_negation=5, is_weapon=False),
     ],
 
 
     'Bardo': [
-        Item('Faca Pequena', '', 0, 0, 0, 1, 0, 0, 0, 0, 1, True),
-        Item('Roupa de Bardo', '', 0, 0, 0, 0, 0, 0, 1, 1, 0, False),
+        Item(name='Faca Pequena', additional_attack_damage=1, stamina_cost=1, is_weapon=True),
+        Item(name='Roupa de Bardo', additional_ad_negation=1, additional_ap_negation=1, is_weapon=False),
     ],
     
     
@@ -49,77 +51,77 @@ items = {
     
     
     'Druida': [
-        Item('Trapo Simples', '', 0, 0, 0, 0, 0, 0, 0, 2, 0, False),
+        Item(name='Trapo Simples', additional_ap_negation=2, is_weapon=False),
     ],
     
     
     'Mago': [
-        Item('Cajado Simples', '', 0, 0, 0, 0, 2, 0, 0, 0, 2, True),
-        Item('Manto Furado', '', 0, 0, 0, 0, 0, 0, 1, 2, 0, False),
+        Item(name='Cajado Simples', additional_ability_power=2, stamina_cost=2, is_weapon=True),
+        Item(name='Manto Furado', additional_ad_negation=1, additional_ap_negation=2, is_weapon=False),
     ],
     
     
     'Paladino': [
-        Item('Espada Média', '', 0, 0, 0, 5, 0, 0, 0, 0, 3, True),
-        Item('Escudo Médio', '', 0, 0, 0, 0, 0, 0, 5, 4, 0, False),
+        Item(name='Espada Média', additional_attack_damage=5, stamina_cost=3, is_weapon=True),
+        Item(name='Escudo Médio', additional_ad_negation=5, additional_ap_negation=4, is_weapon=False),
     ],
 }
 
 
 merchant_items = [
-    ('Erva de cura simples', 'Erva usada para fabricar poções de cura simples', 5),
-    ('Faca de dissecar cega', 'Faca para dissecar animais de caça', 15),
-    ('Pedra de afiar espadas', 'Pedra usada para afiars espadas, deixando-as mais fortes temporariamente', 35),
-    ('Erva de cura de envenamento', 'Erva usada para realizar elixires de cura de envenenamento', 5),
-    ('Álcool', 'Álcool pode ter diversas utilidades, como limpeza de armas e armaduras, fabricação de poções e elixires, etc.', 12),
+    Item(name='Erva de cura simples', description='Erva usada para fabricar poções de cura simples', price=5),
+    Item(name='Faca de dissecar cega', description='Faca para dissecar animais de caça', price=15),
+    Item(name='Pedra de afiar espadas', description='Pedra usada para afiars espadas, deixando-as mais fortes temporariamente', price=35),
+    Item(name='Erva de cura de envenamento', description='Erva usada para realizar elixires de cura de envenenamento', price=5),
+    Item(name='Álcool', description='Álcool pode ter diversas utilidades, como limpeza de armas e armaduras, fabricação de poções e elixires, etc.', price=12),
 ]
 
 market_items = [
-    ('Maçã', 'Recupera 2 HP', 2),
-    ('Banana', 'Recupera 2 HP', 2),
-    ('Carne de cervo', 'Recupera 20 HP e 5 de mana', 40),
-    ('Carne de boi', 'Recupera 25 HP e 25 de mana', 55),
-    ('Vinho', 'Recupera 5 HP e 10 de mana', 10),
+    Item(name='Maçã', description='Recupera 2 HP', price=2),
+    Item(name='Banana', description='Recupera 2 HP', price=2),
+    Item(name='Carne de cervo', description='Recupera 20 HP e 5 de mana', price=40),
+    Item(name='Carne de boi', description='Recupera 25 HP e 25 de mana', price=55),
+    Item(name='Vinho', description='Recupera 5 HP e 10 de mana', price=10),
 ]
 
 big_market_items = [
-    ('Pedra de encantamento mágico de arma simples', 'Pedra usada para inflingir dano mágico em uma determinada arma', 210),
-    ('Cimitarra', 'Inflinge 15 de Dano de Ataque e 3 de Dano Verdadeiro adicionais', 150),
-    ('Cajado de Orvalho superior', 'Aumenta a Mana em 12 pontos e infinge 15 de Dano Mágico adicional', 1200),
-    ('Anel de Cura Superior', 'Aplica um cura de 15 HP no usuário em 5 de HP em cada turno. Ao final de cada combate, recupera 40 HP para todos os jogadores', 500),
-    ('Barraca de acampamento simples', 'Útil para longas viagens. Abriga 1 pessoa', 120),
+    Item(name='Pedra de encantamento mágico de arma simples', description='Pedra usada para inflingir dano mágico em uma determinada arma', price=210),
+    Item(name='Cimitarra', description='Inflinge 15 de Dano de Ataque e 3 de Dano Verdadeiro adicionais', price=150),
+    Item(name='Cajado de Orvalho superior', description='Aumenta a Mana em 12 pontos e infinge 15 de Dano Mágico adicional', price=1200),
+    Item(name='Anel de Cura Superior', description='Aplica um cura de 15 HP no usuário em 5 de HP em cada turno. Ao final de cada combate, recupera 40 HP para todos os jogadores', price=500),
+    Item(name='Barraca de acampamento simples', description='Útil para longas viagens. Abriga 1 pessoa', price=120),
 ]
 
 blacksmith_items = [
-    ('Restaurar espada', 'Restaura uma espada quebrada', 25),
-    ('Restaurar machado', 'Restaura um machado quebrado', 25),
-    ('Restaurar cajado', 'Restaura um cajado quebrado', 25),
-    ('Restaurar armadura', 'Restaura uma peça de armadura quebrada', 30),
-    ('Aprimorar escudo de Paladino', 'Aprimora o escudo de um Paladino até o nível Superior', 500),
+    Item(name='Restaurar espada', description='Restaura uma espada quebrada', price=25),
+    Item(name='Restaurar machado', description='Restaura um machado quebrado', price=25),
+    Item(name='Restaurar cajado', description='Restaura um cajado quebrado', price=25),
+    Item(name='Restaurar armadura', description='Restaura uma peça de armadura quebrada', price=30),
+    Item(name='Aprimorar escudo de Paladino', description='Aprimora o escudo de um Paladino até o nível Superior', price=500),
 ]
 
 stable_items = [
-    ('Pangaré', 'Consegue andar uma distância considerável (50m) sem se cansar', 3000),
-    ('Cavalo treinado', 'Consegue andar uma longa distância (100m) sem se cansar', 6000),
-    ('Burro de carga', 'Consegue levar uma carga considerável de itens (20 itens)', 3500),
-    ('Cavalo de elite', 'Consegue andar livremente sem se cansar (sem limite)', 50000),
-    ('Carroça com 4 cavalos', 'Consegue levar cargas muito pesadas (100 itens) sem se cansar', 250000),
+    Item(name='Pangaré', description='Consegue andar uma distância considerável (50m) sem se cansar', price=3000),
+    Item(name='Cavalo treinado', description='Consegue andar uma longa distância (100m) sem se cansar', price=6000),
+    Item(name='Burro de carga', description='Consegue levar uma carga considerável de itens (20 itens)', price=3500),
+    Item(name='Cavalo de elite', description='Consegue andar livremente sem se cansar (sem limite)', price=50000),
+    Item(name='Carroça com 4 cavalos', description='Consegue levar cargas muito pesadas (100 itens) sem se cansar', price=250000),
 ]
 
 alchemist_items = [
-    ('Erva de cura simples', 'Erva usada para fabricar poções de cura simples', 2),
-    ('Erva de cura de envenenamento', 'Erva usada para realizar elixires de cura de envenenamento', 5),
-    ('Receita de poção de cura', 'Receita para fabricar poção de cura', 50),
-    ('Receita de poção de força', 'Receita para fabricar poção de força', 65),
-    ('Kit de poções básicas', 'Kit contendo 5 poções de cura simples e 5 poções de mana simples', 250),
+    Item(name='Erva de cura simples', description='Erva usada para fabricar poções de cura simples', price=2),
+    Item(name='Erva de cura de envenenamento', description='Erva usada para realizar elixires de cura de envenenamento', price=5),
+    Item(name='Receita de poção de cura', description='Receita para fabricar poção de cura', price=50),
+    Item(name='Receita de poção de força', description='Receita para fabricar poção de força', price=65),
+    Item(name='Kit de poções básicas', description='Kit contendo 5 poções de cura simples e 5 poções de mana simples', price=250),
 ]
 
 jewelry_items = [
-    ('Minério de prata refinado', 'Usado para forjar espadas e escudos e armaduras', 100),
-    ('Minério de ouro refinado', 'Usado para fabricar itens diversos', 1500),
-    ('Colar de diamante', 'Sem nenhuma utilidade específica, mas é muito bonito!', 350000),
-    ('Minério de diamante bruto', 'Precisa ser refinado para ser utilizado', 5000),
-    ('Rubi', 'Jóia extremamente rara de se encontrar. Pode ser utilizada em alguns itens mágicos', 120000),
+    Item(name='Minério de prata refinado', description='Usado para forjar espadas e escudos e armaduras', price=100),
+    Item(name='Minério de ouro refinado', description='Usado para fabricar itens diversos', price=1500),
+    Item(name='Colar de diamante', description='Sem nenhuma utilidade específica, mas é muito bonito!', price=350000),
+    Item(name='Minério de diamante bruto', description='Precisa ser refinado para ser utilizado', price=5000),
+    Item(name='Rubi', description='Jóia extremamente rara de se encontrar. Pode ser utilizada em alguns itens mágicos', price=120000),
 ]
 
 
@@ -172,7 +174,7 @@ def create_item():
     name = input('Insira o nome do item: ')
     description = input('Insira a descrição do item: ')
     price = int(input('Insira o valor do item: '))
-    item = (name, description, price)
+    item = Item(name=name, description=description, price=price)
 
     print()
 

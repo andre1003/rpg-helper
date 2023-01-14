@@ -5,7 +5,7 @@ from ability import Ability
 # Character class
 class Character:
     # Constructor
-    def __init__(self, name, character_class, health, mana, stamina, attack_damage, ability_power, true_damage, attack_damage_negation, ability_power_negation, attack_dice_number, attack_dice_value, defense_dice_number, defense_dice_value, additional_ability_dice):
+    def __init__(self, name, character_class, health, mana, stamina, attack_damage, ability_power, true_damage, attack_damage_negation, ability_power_negation, attack_dice_number, attack_dice_value, defense_dice_number, defense_dice_value, additional_ability_dice, coins=0, xp=0):
         self.name = name
         self.character_class = character_class
         
@@ -31,9 +31,10 @@ class Character:
 
         self.additional_ability_dice = additional_ability_dice
 
-
-        # Abilities
         self.character_abilities = list()
+
+        self.coins = coins
+        self.xp = xp
 
 
     # Set status
@@ -120,3 +121,32 @@ class Character:
 
     def add_ability(self, ability: Ability):
         self.character_abilities.append(ability)
+
+    def get_data(self):
+        data = ''
+
+        data += str(self.name) + '\n'
+        data += str(self.character_class) + '\n'
+
+        data += str(self.base_health) + '\n'
+        data += str(self.base_mana) + '\n'
+        data += str(self.base_stamina) + '\n'
+
+        data += str(self.base_attack_damage) + '\n'
+        data += str(self.base_ability_power) + '\n'
+        data += str(self.base_true_damage) + '\n'
+
+        data += str(self.attack_damage_negation) + '\n'
+        data += str(self.ability_power_negation) + '\n'
+
+        data += str(self.attack_dice_number) + '\n'
+        data += str(self.attack_dice_value) + '\n'
+        data += str(self.defense_dice_number) + '\n'
+        data += str(self.defense_dice_value) + '\n'
+        
+        data += str(self.additional_ability_dice) + '\n'
+
+        data += str(self.coins) + '\n'
+        data += str(self.xp) + '\n'
+
+        return data
