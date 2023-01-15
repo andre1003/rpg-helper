@@ -28,6 +28,30 @@ class Item:
 
         self.is_weapon = is_weapon
 
+    def get_data(self):
+        data = ''
+
+        data += str(self.name) + '\n'
+        data += str(self.description) + '\n'
+        self.price
+        
+        data += str(self.additional_health) + '\n'
+        data += str(self.additional_mana) + '\n'
+        data += str(self.additional_stamina) + '\n'
+
+        data += str(self.additional_attack_damage) + '\n'
+        data += str(self.additional_ability_power) + '\n'
+        data += str(self.additional_true_damage) + '\n'
+
+        data += str(self.additional_ad_negation) + '\n'
+        data += str(self.additional_ap_negation) + '\n'
+
+        data += str(self.stamina_cost) + '\n'
+
+        data += str(self.is_weapon)
+
+        return data
+
 
 
 
@@ -204,3 +228,17 @@ def create_item():
         jewelry_items.append(item)
 
     print(f'\nO item {bcolors.CYAN}{name}{bcolors.ENDC} foi adicionado ao inventário do {bcolors.GREEN}{merchants[option]}{bcolors.ENDC}')
+
+
+# def save_all_items(path: str):
+#     save_player_items(path)
+#     save_commertiant_items()
+
+# def save_player_items(path: str):
+#     for player_class in items:
+#         for item in items[player_class]:
+#             name = item.name.replace(' ', '_')
+#             file = open(f'{path}/{name}.txt', 'w')
+
+
+# def save_commertiant_items():

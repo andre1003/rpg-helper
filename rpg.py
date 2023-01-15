@@ -267,7 +267,7 @@ def create_players():
         ryze = Character("Ryze", "Mago", 73, 34, 49, 8, 13, 4, 3, 7, 1, 6, 1, 6, 1)
         flugel = Character("Flugel", "Paladino", 93, 14, 32, 20, 18, 6, 7, 3, 1, 10, 1, 10, 1)
         
-        players = [spark, nikolag, celaena, ryze, flugel]
+        players = [celaena, flugel, nikolag, ryze, spark]
 
         for player in players:
             player.coins = 500
@@ -308,23 +308,71 @@ def create_enemies():
 
 # Create known abilities
 def create_abilities(players: list):
-    invisibility = Ability('Invisibilidade', 0, 15, 0, 0, 0, 0, 0, 0, 0, True, 0, False, 0, True, False, 3)
-    enchanting_beauty = Ability('Beleza Encantadora', 0, 13, 2, 0, 0, 0, 0, 0, 0, True, 0, False, 0, False, False, 3)
-    mortal_fingering = Ability('Dedilhado Mortal', 0, 10, 5, 5, 5, 10, 0, 0, 0, True, 0, True, 0, True, False, 0)
-    heavy_strike = Ability('Corte Pesado', 0, 2, 7, 13, 2, 5, 0, 0, 0, False, 1, False, 1, False, True, 4)
-    barbarian_roar = Ability('Rugido Bárbaro', 0, 0, 15, 15, 0, 5, 0, 0, 0, False, 1, False, 1, False, True, 4)
-    simple_orb = Ability('Orbe Simples', 0, 15, 0, 0, 15, 5, 0, 0, 0, False, 1, False, 0, False, True, 3)
-    simple_call = Ability('Chamado Simples', 0, 5, 10, 10, 5, 5, 0, 0, 0, False, 1, False, 1, False, True, 3)
+    path = 'saves/'
+    abilities = list()
 
-    players[0].add_ability(invisibility)
-    players[0].add_ability(enchanting_beauty)
-    players[1].add_ability(heavy_strike)
-    players[1].add_ability(barbarian_roar)
-    players[2].add_ability(mortal_fingering)
-    players[3].add_ability(simple_orb)
-    players[4].add_ability(simple_call)
+    if not os.path.exists(path):
+        invisibility = Ability('Invisibilidade', 0, 15, 0, 0, 0, 0, 0, 0, 0, True, 0, False, 0, True, False, 3)
+        enchanting_beauty = Ability('Beleza Encantadora', 0, 13, 2, 0, 0, 0, 0, 0, 0, True, 0, False, 0, False, False, 3)
+        mortal_fingering = Ability('Dedilhado Mortal', 0, 10, 5, 5, 5, 10, 0, 0, 0, True, 0, True, 0, True, False, 0)
+        heavy_strike = Ability('Corte Pesado', 0, 2, 7, 13, 2, 5, 0, 0, 0, False, 1, False, 1, False, True, 4)
+        barbarian_roar = Ability('Rugido Bárbaro', 0, 0, 15, 15, 0, 5, 0, 0, 0, False, 1, False, 1, False, True, 4)
+        simple_orb = Ability('Orbe Simples', 0, 15, 0, 0, 15, 5, 0, 0, 0, False, 1, False, 0, False, True, 3)
+        simple_call = Ability('Chamado Simples', 0, 5, 10, 10, 5, 5, 0, 0, 0, False, 1, False, 1, False, True, 3)
 
-    return [invisibility, enchanting_beauty, heavy_strike, barbarian_roar, mortal_fingering, simple_orb, simple_call]
+        players[4].add_ability(invisibility)
+        players[4].add_ability(enchanting_beauty)
+        players[2].add_ability(heavy_strike)
+        players[2].add_ability(barbarian_roar)
+        players[0].add_ability(mortal_fingering)
+        players[3].add_ability(simple_orb)
+        players[1].add_ability(simple_call)
+
+        abilities = [invisibility, enchanting_beauty, heavy_strike, barbarian_roar, mortal_fingering, simple_orb, simple_call]
+
+    else:
+        for directory in os.listdir(path):
+            for item in os.listdir(path + directory):
+                if item != 'player.txt':
+                    file = open(path + directory + '/' + item, 'r')
+                    content = file.readlines()
+                    file.close()
+
+                    for i in range(len(content)):
+                        content[i] = content[i].replace('\n', '')
+
+                        if (i > 0 and i < 10) or (i == 11) or (i == 13) or (i == 16):
+                            content[i] = int(content[i])
+
+                    
+                    if content[10] == 'True':
+                        content[10] = True
+                    else:
+                        content[10] = False
+
+                    if content[12] == 'True':
+                        content[12] = True
+                    else:
+                        content[12] = False
+
+                    if content[14] == 'True':
+                        content[14] = True
+                    else:
+                        content[14] = False
+
+                    if content[15] == 'True':
+                        content[15] = True
+                    else:
+                        content[15] = False
+
+                    ability = Ability(content[0], content[1], content[2], content[3], content[4], content[5], content[6], content[7], content[8], content[9], content[10], content[11], content[12], content[13], content[14], content[15], content[16])
+                    abilities.append(ability)
+
+                    for player in players:
+                        if player.name in directory:
+                            player.add_ability(ability)
+
+    return abilities
 
 
 # Create a random enemy
@@ -849,6 +897,9 @@ def show_inventories(players: list):
 
 # Save game data
 def save(players: list):
+    if not os.path.exists('saves/'):
+        os.mkdir('saves/')
+
     for player in players:
         path = f'saves/{player.name}/'
         if not os.path.exists(path):
@@ -864,7 +915,6 @@ def save(players: list):
             file.writelines(ability.get_data())
             file.close()
         
-
 
 # Clear screen
 def clear():
@@ -929,6 +979,7 @@ if __name__ == '__main__':
         # Exit
         if choice == 0:
             clear()
+            save(players)
             break
 
         # Create player
@@ -1073,9 +1124,22 @@ if __name__ == '__main__':
             clear()
             print('Todas as Habilidades\n')
 
-            for ability in abilities:
-                print(ability.name)
+            option = int(input('Visualização completa ou simplificada? [1 - Completa/0 - Simplificada]: ') or 0)
+            print()
 
+            if option == 1:
+                for ability in abilities:
+                    print(25*'-=')
+                    print()
+                    ability.show_ability_details()
+                    print()
+
+                print(25*'-=')
+
+            else:
+                for ability in abilities:
+                    print(ability.name)
+                
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
 

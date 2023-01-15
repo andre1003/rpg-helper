@@ -21,6 +21,10 @@ class Character:
         self.ability_power = ability_power
         self.true_damage = true_damage
 
+        self.base_attack_damage = attack_damage
+        self.base_ability_power = ability_power
+        self.base_true_damage = true_damage
+
         self.attack_damage_negation = attack_damage_negation
         self.ability_power_negation = ability_power_negation
 
