@@ -1,4 +1,5 @@
 from utils import bcolors
+import os
 
 
 class Item:
@@ -33,7 +34,7 @@ class Item:
 
         data += str(self.name) + '\n'
         data += str(self.description) + '\n'
-        self.price
+        data += str(self.price) + '\n'
         
         data += str(self.additional_health) + '\n'
         data += str(self.additional_mana) + '\n'
@@ -66,11 +67,6 @@ items = {
     'Bardo': [
         Item(name='Faca Pequena', additional_attack_damage=1, stamina_cost=1, is_weapon=True),
         Item(name='Roupa de Bardo', additional_ad_negation=1, additional_ap_negation=1, is_weapon=False),
-    ],
-    
-    
-    'Bruxo': [
-
     ],
     
     
@@ -195,6 +191,7 @@ def get_item_at_index(character_class:str , index: int):
 
 # Create an item
 def create_item():
+    # Item info
     name = input('Insira o nome do item: ')
     description = input('Insira a descrição do item: ')
     price = int(input('Insira o valor do item: '))
@@ -202,43 +199,249 @@ def create_item():
 
     print()
 
+    # Get the correct commertiant to add the item
     for i in range(len(merchants)):
         print(f'{i} - {merchants[i]}')
     option = int(input('\nQual mercador irá vender o item: '))
 
+    # Merchant
     if option == 0:
         merchant_items.append(item)
     
+    # Market
     elif option == 1:
         market_items.append(item)
 
+    # Big market
     elif option == 2:
         big_market_items.append(item)
 
+    # Blacksmith
     elif option == 3:
         blacksmith_items.append(item)
 
+    # Stable
     elif option == 4:
         stable_items.append(item)
 
+    # Alchemist
     elif option == 5:
         alchemist_items.append(item)
 
+    # Jewelry
     elif option == 6:
         jewelry_items.append(item)
 
+    # Display success message
     print(f'\nO item {bcolors.CYAN}{name}{bcolors.ENDC} foi adicionado ao inventário do {bcolors.GREEN}{merchants[option]}{bcolors.ENDC}')
 
 
-# def save_all_items(path: str):
-#     save_player_items(path)
-#     save_commertiant_items()
+# Save all player items
+def save_player_items():
+    # Check if path exists and create it if needed
+    path = 'saves/Items/'
+    if not os.path.exists(path):
+        os.mkdir(path)
 
-# def save_player_items(path: str):
-#     for player_class in items:
-#         for item in items[player_class]:
-#             name = item.name.replace(' ', '_')
-#             file = open(f'{path}/{name}.txt', 'w')
+    # Loop character classes
+    for char_class in items:
+        # Loop player items
+        for item in items[char_class]:
+            # Create the directory if needed
+            if not os.path.exists(path + f'{char_class}/'):
+                os.mkdir(path + f'{char_class}/')
+
+            # Save item
+            name = path + f'{char_class}/' + item.name.replace(' ', '_') + '.txt'
+            file = open(name, 'w')
+            file.writelines(item.get_data())
+            file.close()
+    
+
+# Load all player items from files, if possible
+def load_player_items():
+    # Check if path exists and exit if it does not
+    path = 'saves/Items/'
+    if not os.path.exists(path):
+        return
+    
+    # Loop characters class
+    for char_class in items:
+        item_list = list()
+
+        # Loop items
+        for item in os.listdir(path + char_class + '/'):
+            # Get item raw content
+            file = open(path + char_class + '/' + item, 'r')
+            content = file.readlines()
+            file.close()
+
+            # Configure content
+            for i in range(len(content)):
+                # Remove all '\n'
+                content[i] = content[i].replace('\n', '')
+
+                # Convert the needed content to integer
+                if i > 1 and i < len(content) - 1:
+                    content[i] = int(content[i])
+
+                # Convert the needed content to boolean
+                elif i == len(content) - 1:
+                    if content[i] == 'True':
+                        content[i] = True
+                    else:
+                        content[i] = False
+
+            # Create new item and add it o item list
+            new_item = Item(content[0], content[1], content[2], content[3], content[4], content[5], content[6], content[7], content[8], content[9], content[10], content[11], content[12])
+            item_list.append(new_item)
+        
+        # Assing the list to the dictionary
+        items[char_class] = item_list
 
 
-# def save_commertiant_items():
+# Save all commertiant items
+def save_commertiant_items():
+    # Check if path exists and create it if needed
+    path = 'saves/Commertiants/'
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+    # Loop commertiants and create the needed paths
+    for commertiant in merchants:
+        if not os.path.exists(path + commertiant + '/'):
+            os.mkdir(path + commertiant + '/')
+
+    # Save merchant items
+    for item in merchant_items:
+        name = item.name.replace(' ', '_')
+        file = open(path + merchants[0] + f'/{name}.txt', 'w')
+        file.writelines(item.get_data())
+        file.close()
+
+    # Save market items    
+    for item in market_items:
+        name = item.name.replace(' ', '_')
+        file = open(path + merchants[1] + f'/{name}.txt', 'w')
+        file.writelines(item.get_data())
+        file.close()
+
+    # Save big market items
+    for item in big_market_items:
+        name = item.name.replace(' ', '_')
+        file = open(path + merchants[2] + f'/{name}.txt', 'w')
+        file.writelines(item.get_data())
+        file.close()
+
+    # Save blacksmith items
+    for item in blacksmith_items:
+        name = item.name.replace(' ', '_')
+        file = open(path + merchants[3] + f'/{name}.txt', 'w')
+        file.writelines(item.get_data())
+        file.close()
+
+    # Save stable items
+    for item in stable_items:
+        name = item.name.replace(' ', '_')
+        file = open(path + merchants[4] + f'/{name}.txt', 'w')
+        file.writelines(item.get_data())
+        file.close()
+
+    # Save alchemist items
+    for item in alchemist_items:
+        name = item.name.replace(' ', '_')
+        file = open(path + merchants[5] + f'/{name}.txt', 'w')
+        file.writelines(item.get_data())
+        file.close()
+
+    # Save jewelry items
+    for item in jewelry_items:
+        name = item.name.replace(' ', '_')
+        file = open(path + merchants[6] + f'/{name}.txt', 'w')
+        file.writelines(item.get_data())
+        file.close()
+
+
+# Load all commertiant items, if possible
+def load_commertiant_items():
+    # Check if path exists and exit if it does not
+    path = 'saves/Commertiants/'
+    if not os.path.exists(path):
+        return
+
+    # Clear all commertiant lists
+    merchant_items.clear()
+    market_items.clear()
+    big_market_items.clear()
+    blacksmith_items.clear()
+    stable_items.clear()
+    alchemist_items.clear()
+    jewelry_items.clear()
+
+    # Loop all commertiants
+    for commertiant in merchants:
+        # Loop all items
+        for item in os.listdir(path + commertiant):
+            # Get item raw content
+            file = open(path + commertiant + f'/{item}', 'r')
+            content = file.readlines()
+            file.close()
+
+            # Configure item content
+            for i in range(len(content)):
+                # Remove all '\n'
+                content[i] = content[i].replace('\n', '')
+
+                # Convert the needed content to integer 
+                if i > 1 and i < len(content) - 1:
+                    content[i] = int(content[i])
+
+                # Convert the needed content to boolean
+                elif i == len(content) - 1:
+                    if content[i] == 'True':
+                        content[i] = True
+                    else:
+                        content[i] = False
+
+            # Create new item
+            new_item = Item(content[0], content[1], content[2], content[3], content[4], content[5], content[6], content[7], content[8], content[9], content[10], content[11], content[12])
+
+            # Add the new item to merchant
+            if commertiant == merchants[0]:
+                merchant_items.append(new_item)
+
+            # Add the new item to market            
+            elif commertiant == merchants[1]:
+                market_items.append(new_item)
+
+            # Add the new item to big market
+            elif commertiant == merchants[2]:
+                big_market_items.append(new_item)
+
+            # Add the new item to blacksmith
+            elif commertiant == merchants[3]:
+                blacksmith_items.append(new_item)
+
+            # Add the new item to stable
+            elif commertiant == merchants[4]:
+                stable_items.append(new_item)
+
+            # Add the new item to alchemist
+            elif commertiant == merchants[5]:
+                alchemist_items.append(new_item)
+
+            # Add the new item to jewelry
+            elif commertiant == merchants[6]:
+                jewelry_items.append(new_item)
+
+
+# Save all items
+def save_items():
+    save_player_items()
+    save_commertiant_items()
+
+
+# Load all items
+def load_items():
+    load_player_items()
+    load_commertiant_items()

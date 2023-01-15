@@ -1,3 +1,4 @@
+# Imports
 import os
 from random import randint, uniform
 import items
@@ -116,6 +117,7 @@ def calculate_damage(attacker: Character, defender: Character, is_heavy_attack: 
     return final_damage
 
 
+# Calculate damage from ability
 def calculate_damage_ability(attacker: Character, defender: Character, ability: Ability, players: list, current_turn: int, current_combat_abilities: list):
     print()
     print(25*'-=')
@@ -241,13 +243,15 @@ def create_character():
     attack_damage_negation = int(input('Negação de Dano de Ataque: '))
     ability_power_negation = int(input('Negação de Dano Mágico: '))
 
-    # Set dice
+    # Set attack dice
     attack_dice_number = int(input('Quantidade de Dados de Ataque: '))
     attack_dice_value = int(input('Valor dos Dados de Ataque: '))
 
+    # Set defense dice
     defense_dice_number = int(input('Quantidade de Dados de Defesa: '))
     defense_dice_value = int(input('Valor dos Dados de Defesa: '))
 
+    # Set ability dice
     additional_ability_dice = int(input('Quantidade de Dados Adicionais para Habilidade: '))
 
     # Return character
@@ -256,38 +260,57 @@ def create_character():
 
 # Create known players
 def create_players():
+    # Set initial variables
     players = list()
     path = 'saves/'
 
+    # If there are no save file
     if not os.path.exists(path):
-        # Create players
+        # Create all players
         spark = Character("Spark", "Druida", 59, 39, 59, 7, 29, 5, 5, 7, 1, 8, 1, 8, 1)
         nikolag = Character("Nikolag", "Bárbaro", 43, 33, 22, 16, 7, 5, 7, 3, 1, 12, 1, 12, 1)
         celaena = Character("Celaena", "Bardo", 42, 50, 11, 10, 15, 2, 5, 5, 1, 8, 1, 8, 1)
         ryze = Character("Ryze", "Mago", 73, 34, 49, 8, 13, 4, 3, 7, 1, 6, 1, 6, 1)
         flugel = Character("Flugel", "Paladino", 93, 14, 32, 20, 18, 6, 7, 3, 1, 10, 1, 10, 1)
         
+        # Create a list of players
         players = [celaena, flugel, nikolag, ryze, spark]
 
+        # Give the coins and XP from 1st section
         for player in players:
             player.coins = 500
             player.xp = 785
     
+    # If there are save files
     else:
+        # Loop all directories
         for directory in os.listdir(path):
+            # If it is Items or Commertiants directory, continue
+            if 'Items' in directory or 'Commertiants' in directory:
+                continue
+
+            # Get player raw content
             file = open(f'{path + directory}/player.txt', 'r')
             content = file.readlines()
             file.close()
 
+            # Configure player content
             for i in range(len(content)):
+                # Remove all '\n'
                 content[i] = content[i].replace('\n', '')
+
+                # Convert the needed content to integer
                 if i > 1:
                     content[i] = int(content[i])
 
+            # Create new player
             new_player = Character(content[0], content[1], content[2], content[3], content[4], content[5], content[6], content[7], content[8], content[9], content[10], content[11], content[12], content[13], content[14])
+            
+            # Load player's coins and XP
             new_player.coins = content[15]
             new_player.xp = content[16]
 
+            # Add player to players list
             players.append(new_player)
             
     # Return players
@@ -296,6 +319,7 @@ def create_players():
 
 # Create some random enemies
 def create_enemies():
+    # Create the default enemies
     goblin = Character('Goblin', 'None', 50, 0, 0, 5, 0, 0, 0, 0, 1, 6, 1, 6, 0)
     #mage_goblin = Character('Goblin Mago', 'None', 25, 0, 0, 0, 3, 0, 0, 0, 1, 6, 1, 6, 0)
     #big_goblin = Character('Goblin Grande', 'None', 300, 0, 0, 30, 0, 0, 0, 0, 1, 6, 1, 6, 0)
@@ -303,15 +327,19 @@ def create_enemies():
     #armored_goblin = Character('Goblin de Armadura', 'None', 50, 0, 0, 5, 0, 0, 2, 2, 1, 6, 1, 6, 0)
     #armored_big_goblin = Character('Goblin Grande de Armadura', 'None', 300, 0, 0, 30, 0, 0, 15, 15, 1, 6, 1, 6, 0)
 
+    # Return the list of enemies
     return [goblin]#, mage_goblin, big_goblin, archer_goblin, armored_goblin, armored_big_goblin]
 
 
 # Create known abilities
 def create_abilities(players: list):
+    # Set initial variables
     path = 'saves/'
     abilities = list()
 
+    # If there is no save file
     if not os.path.exists(path):
+        # Create all known abilities
         invisibility = Ability('Invisibilidade', 0, 15, 0, 0, 0, 0, 0, 0, 0, True, 0, False, 0, True, False, 3)
         enchanting_beauty = Ability('Beleza Encantadora', 0, 13, 2, 0, 0, 0, 0, 0, 0, True, 0, False, 0, False, False, 3)
         mortal_fingering = Ability('Dedilhado Mortal', 0, 10, 5, 5, 5, 10, 0, 0, 0, True, 0, True, 0, True, False, 0)
@@ -320,58 +348,78 @@ def create_abilities(players: list):
         simple_orb = Ability('Orbe Simples', 0, 15, 0, 0, 15, 5, 0, 0, 0, False, 1, False, 0, False, True, 3)
         simple_call = Ability('Chamado Simples', 0, 5, 10, 10, 5, 5, 0, 0, 0, False, 1, False, 1, False, True, 3)
 
+        # Assign the abilities to each player
+        players[0].add_ability(mortal_fingering)
+        players[1].add_ability(simple_call)
+        players[2].add_ability(heavy_strike)
+        players[3].add_ability(simple_orb)
+        players[2].add_ability(barbarian_roar)
         players[4].add_ability(invisibility)
         players[4].add_ability(enchanting_beauty)
-        players[2].add_ability(heavy_strike)
-        players[2].add_ability(barbarian_roar)
-        players[0].add_ability(mortal_fingering)
-        players[3].add_ability(simple_orb)
-        players[1].add_ability(simple_call)
 
+        # Create abilities list
         abilities = [invisibility, enchanting_beauty, heavy_strike, barbarian_roar, mortal_fingering, simple_orb, simple_call]
 
+    # If there are save files
     else:
+        # Loop all directories
         for directory in os.listdir(path):
+            # If it is Item or Commertiants directory, continue
+            if 'Item' in directory or 'Commertiants' in directory:
+                continue
+            
+            # Loop all files inside player's directory
             for item in os.listdir(path + directory):
+                # If file is an ability
                 if item != 'player.txt':
+                    # Get ability raw content
                     file = open(path + directory + '/' + item, 'r')
                     content = file.readlines()
                     file.close()
 
+                    # Configure ability content
                     for i in range(len(content)):
+                        # Remove all '\n'
                         content[i] = content[i].replace('\n', '')
 
+                        # Convert all needed content to integer
                         if (i > 0 and i < 10) or (i == 11) or (i == 13) or (i == 16):
                             content[i] = int(content[i])
 
-                    
+                    # Convert the needed content to boolean
                     if content[10] == 'True':
                         content[10] = True
                     else:
                         content[10] = False
 
+                    # Convert the needed content to boolean
                     if content[12] == 'True':
                         content[12] = True
                     else:
                         content[12] = False
 
+                    # Convert the needed content to boolean
                     if content[14] == 'True':
                         content[14] = True
                     else:
                         content[14] = False
 
+                    # Convert the needed content to boolean
                     if content[15] == 'True':
                         content[15] = True
                     else:
                         content[15] = False
 
+                    # Create the ability and add to abilities list
                     ability = Ability(content[0], content[1], content[2], content[3], content[4], content[5], content[6], content[7], content[8], content[9], content[10], content[11], content[12], content[13], content[14], content[15], content[16])
                     abilities.append(ability)
 
+                    # Add the ability to the proper player
                     for player in players:
                         if player.name in directory:
                             player.add_ability(ability)
 
+    # Return all abilities
     return abilities
 
 
@@ -715,8 +763,13 @@ def commertiant(players: list):
     while True:
         clear()
         print('Compra e Venda')
+
         # Print options
-        print('\n1 - Mercador\n2 - Mercado\n3 - Mercadão\n4 - Ferreiro\n5 - Estábulo\n6 - Alquimista\n7 - Joalheria\n')
+        index = 1
+        for commertiant in items.merchants:
+            print(f'{index} - {commertiant}')
+            index += 1
+        print()
 
         # Get the commertiant type
         option = int(input('Qual o tipo de comerciante: '))
@@ -772,24 +825,29 @@ def commertiant(players: list):
         index = 0
         for item in commertiant_items:
             price = f'{item.price:,}'.replace(',', '.')
-            print(f'{index} - {bcolors.CYAN}{item.name}{bcolors.ENDC} - {bcolors.YELLOW}${price}{bcolors.ENDC}\n{item.description}\n')
+            description = item.description or '[O item não possui descrição]'
+            print(f'{index} - {bcolors.CYAN}{item.name}{bcolors.ENDC} - {bcolors.YELLOW}${price}{bcolors.ENDC}\n{description}\n')
             index += 1
 
-        option = int(input('\nQual item o jogador deseja adicionar: '))
+        # Check if any player wants to buy an item
+        option = int(input('\nQual item o jogador deseja adicionar [-1 para voltar]: '))
         if option != -1:
             print()
             for i in range(len(players)):
                 print(f'{i} - {players[i].name}')
             opt = int(input('\nQual jogador quer comprar o item: '))
 
+            # If the player has enougth money to buy the item
             if players[opt].coins >= commertiant_items[option].price:
+                # Decrease player's coins and add the item to the player's inventory
                 players[opt].coins -= commertiant_items[option].price
                 items.items[players[opt].character_class].append(commertiant_items[option])
                 print(f'{bcolors.CYAN}{commertiant_items[option].name}{bcolors.ENDC} adicionado ao inventário de {bcolors.GREEN}{players[opt].name}{bcolors.ENDC}')
 
-        option = int(input('\nDeseja continuar comprando? [1 - True/0 - False]:  ') or 1)
+            # Check if player want to keep buying
+            option = int(input('\nDeseja continuar comprando? [1 - True/0 - False]:  ') or 1)
 
-        if option == 0:
+        if option != 1:
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
             break
@@ -882,9 +940,13 @@ def create_ability():
 
 # Show all players invetories
 def show_inventories(players: list):
+    # Loop players
     for player in players:
+        # Display player name, coins and XP
         print(f'Inventário de {bcolors.GREEN}{player.name}{bcolors.ENDC}\n')
         print(f'\t{bcolors.CYAN}XP: {player.xp}{bcolors.ENDC}\n\t{bcolors.YELLOW}Moedas: {player.coins}{bcolors.ENDC}\n')
+
+        # Loop player items, displaying each one of them
         for item in items.items[player.character_class]:
             price = f' - {bcolors.YELLOW}SEM PREÇO{bcolors.ENDC}'
             if item.price != -1:
@@ -897,23 +959,31 @@ def show_inventories(players: list):
 
 # Save game data
 def save(players: list):
+    # Create the saves directory if needed
     if not os.path.exists('saves/'):
         os.mkdir('saves/')
 
+    # Loop players
     for player in players:
+        # Create player directory if needed
         path = f'saves/{player.name}/'
         if not os.path.exists(path):
             os.mkdir(path)
 
+        # Save player data
         file = open(f'{path}player.txt', 'w')
         file.writelines(player.get_data())
         file.close()
 
+        # Save all player's abilities
         for ability in player.character_abilities:
             name = ability.name.replace(' ','_')
             file = open(f'{path}/{name}.txt', 'w')
             file.writelines(ability.get_data())
             file.close()
+
+    # Save items
+    items.save_items()
         
 
 # Clear screen
@@ -934,7 +1004,7 @@ def options():
     f'1  - Criar jogador\n'
     f'2  - Criar inimigo\n'+
     f'3  - Criar habilidade\n'+
-    f'4  - Criar Item\n\n'+
+    f'4  - Criar item\n\n'+
     f'{bcolors.RED}'+
     f'5  - Excluir jogador\n'+
     f'6  - Excluir inimigo\n'+
@@ -946,7 +1016,7 @@ def options():
     f'11 - Visualizar todas as habilidades\n'+
     f'12 - Visualizar inventários\n\n'+
     f'{bcolors.ENDC}'+
-    f'13 - Atribuir Habilidade\n'+
+    f'13 - Atribuir habilidade\n'+
     f'14 - Combate\n'+
     f'15 - Compra e venda\n'+
     f'16 - Abrir baú\n'+
@@ -963,10 +1033,20 @@ def options():
 # Main code
 if __name__ == '__main__':
     print(bcolors.ENDC)
+
+    # Create or load player
     players = create_players()
+
+    # Create default enemies
     enemies = create_enemies()
+
+    # Create or load abilities
     abilities = create_abilities(players)
 
+    # Load all items
+    items.load_items()
+
+    # Start app execution
     while(True):
         clear()
 
