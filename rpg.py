@@ -444,7 +444,7 @@ def create_random_enemy():
     # Set status
     health = randint(min_health, max_health)
     mana = 0
-    stamina = 0
+    stamina = health
 
     # Set damage
     attack_damage = int(health / 10)
@@ -1021,7 +1021,9 @@ def options():
     f'15 - Compra e venda\n'+
     f'16 - Abrir baú\n'+
     f'17 - Definir turno\n'+
-    f'18 - Decisão probabilística\n\n'+
+    f'18 - Decisão probabilística\n'+
+    f'19 - Salvar dados\n'+
+    f'20 - Editar jogadores\n\n'+
     
 
     f'0  - Sair\n'
@@ -1360,6 +1362,7 @@ if __name__ == '__main__':
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
 
+        # Save
         elif choice == 19:
             clear()
             print('Savando Dados...\n')
@@ -1367,6 +1370,21 @@ if __name__ == '__main__':
             save(players)
 
             print('Dados salvos!\n')
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        # Edit a player
+        elif choice == 20:
+            clear()
+            print('Editar Jogador\n')
+
+            while True:
+                edit(players)
+                opt = int(input('\nDeseja editar outro jogador? [1 - True/0 - False] ') or 0)
+                if opt == 0:
+                    break
+
 
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
