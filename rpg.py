@@ -68,7 +68,7 @@ def calculate_damage(attacker: Character, defender: Character, is_heavy_attack: 
     print(f'\t{bcolors.CYAN}>> Total dos dados de defesa AP de {defender.name}: {defender_ap_dice}{bcolors.ENDC}\n\n\n\n')
 
     # Check if player have stamina
-    if attacker.stamina - (5 * attack_intensity_multiplier) < 0:
+    if attacker.stamina - (stamina_cost * attack_intensity_multiplier) < 0:
         print('\nStamina insuficiente para o ataque!')
         return 0
 
@@ -754,8 +754,12 @@ def combat(current_turn: int, players: list, enemies: list, current_combat_abili
             for player in players:
                 player.coins += coins
                 player.xp += xp
+
         else:
             print(f'\n{bcolors.GREEN}{defender.name} {bcolors.RED}morreu!{bcolors.ENDC}')
+
+    # Save player stats
+    save(players)
 
     # Press any key to continue
     input('\nPressione qualquer tecla para continuar...')
