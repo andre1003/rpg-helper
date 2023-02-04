@@ -1,5 +1,6 @@
 # Imports
 import os
+import shutil
 from random import randint, uniform
 import items
 from character import Character
@@ -319,16 +320,41 @@ def create_players():
 
 # Create some random enemies
 def create_enemies():
-    # Create the default enemies
-    goblin = Character('Goblin', 'None', 50, 0, 0, 5, 0, 0, 0, 0, 1, 6, 1, 6, 0)
-    #mage_goblin = Character('Goblin Mago', 'None', 25, 0, 0, 0, 3, 0, 0, 0, 1, 6, 1, 6, 0)
-    #big_goblin = Character('Goblin Grande', 'None', 300, 0, 0, 30, 0, 0, 0, 0, 1, 6, 1, 6, 0)
-    #archer_goblin = Character('Goblin Arqueiro', 'None', 50, 0, 0, 15, 0, 0, 0, 0, 1, 6, 1, 6, 0)
-    #armored_goblin = Character('Goblin de Armadura', 'None', 50, 0, 0, 5, 0, 0, 2, 2, 1, 6, 1, 6, 0)
-    #armored_big_goblin = Character('Goblin Grande de Armadura', 'None', 300, 0, 0, 30, 0, 0, 15, 15, 1, 6, 1, 6, 0)
+    temp_enemies = list()
+    path = 'temp/'
 
-    # Return the list of enemies
-    return [goblin]#, mage_goblin, big_goblin, archer_goblin, armored_goblin, armored_big_goblin]
+    if os.path.exists(path):
+        temp_enemies = list()
+
+        # Loop all directories
+        for directory in os.listdir(path):
+            # If it is Items or Commertiants directory, continue
+            if 'Items' in directory or 'Commertiants' in directory:
+                continue
+
+            # Get player raw content
+            file = open(f'{path + directory}/enemy.txt', 'r')
+            content = file.readlines()
+            file.close()
+
+            # Configure player content
+            for i in range(len(content)):
+                # Remove all '\n'
+                content[i] = content[i].replace('\n', '')
+
+                # Convert the needed content to integer
+                if i > 1:
+                    content[i] = int(content[i])
+
+            # Create new enemy
+            new_enemy = Character(content[0], content[1], content[2], content[3], content[4], content[5], content[6], content[7], content[8], content[9], content[10], content[11], content[12], content[13], content[14])
+
+            # Add player to players list
+            temp_enemies.append(new_enemy)
+
+    else:
+        os.mkdir(path)
+    return temp_enemies
 
 
 # Create known abilities
@@ -429,20 +455,11 @@ def create_random_enemy():
     name = str(input('Nome do personagem: '))
     character_class = 'Nenhuma'
 
-    try:
-        min_health = int(input('Mínimo de vida [default 50]: '))
-    except:
-        min_health = 50
-
-    try:
-        max_health = int(input('Máximo de vida [default 100]: '))
-    except:
-        max_health = 100
+    health = int(input('Vida do personagem [Padrão é 50]: ') or 50)
 
     is_mage = bool(input('É mago? [True/False]: '))
 
     # Set status
-    health = randint(min_health, max_health)
     mana = 0
     stamina = health
 
@@ -704,18 +721,31 @@ def combat(current_turn: int, players: list, enemies: list, current_combat_abili
         print()
         print(25*'-=')
 
+    temp_path = 'temp/' + defender.name + '/'
     # Decrease defender health
     defender.decrease_health(damage)
+
+    if defender in enemies:
+        file = open(temp_path + 'enemy.txt', 'r')
+        content = file.readlines()
+        file.close()
+
+        content[2] = str(defender.health) + '\n'
+
+        file = open(temp_path + 'enemy.txt', 'w')
+        file.writelines(content)
+        file.close()
 
     # If defender dies, remove it from the list
     if defender.health == 0:
         if defender in enemies:
             print(f'\n{bcolors.RED}{defender.name} morreu!{bcolors.ENDC}')
+            shutil.rmtree('temp/' + defender.name)
             enemies.remove(defender)
             del(defender)
 
-            xp = randint(int(input('Mínimo de XP: ') or 10), int(input('Máximo de XP: ') or 20))
-            coins = randint(int(input('\nMínimo de Moedas: ') or 0), int(input('Máximo de Moedas: ') or 0))
+            xp = int(input('XP [Enter para 0]: ') or 0)
+            coins = int(input('Moedas [Enter para 0]: ') or 0)
 
             print()
             print(25*'-=')
@@ -759,7 +789,7 @@ def reset_stamina(players: list):
 
 
 # Commertiant handler
-def commertiant(players: list):
+def commertiant(players: list, no_charge: bool):
     while True:
         clear()
         print('Compra e Venda')
@@ -840,7 +870,8 @@ def commertiant(players: list):
             # If the player has enougth money to buy the item
             if players[opt].coins >= commertiant_items[option].price:
                 # Decrease player's coins and add the item to the player's inventory
-                players[opt].coins -= commertiant_items[option].price
+                if not no_charge:
+                    players[opt].coins -= commertiant_items[option].price
                 items.items[players[opt].character_class].append(commertiant_items[option])
                 print(f'{bcolors.CYAN}{commertiant_items[option].name}{bcolors.ENDC} adicionado ao inventário de {bcolors.GREEN}{players[opt].name}{bcolors.ENDC}')
 
@@ -1023,7 +1054,10 @@ def options():
     f'17 - Definir turno\n'+
     f'18 - Decisão probabilística\n'+
     f'19 - Salvar dados\n'+
-    f'20 - Editar jogadores\n\n'+
+    f'20 - Editar jogadores\n'+
+    f'21 - Adicionar moedas e XP\n'+
+    f'22 - Definir moedas e XP\n'+
+    f'23 - Adicionar item\n\n'+
     
 
     f'0  - Sair\n'
@@ -1062,6 +1096,7 @@ if __name__ == '__main__':
         if choice == 0:
             clear()
             save(players)
+            shutil.rmtree('temp/')
             break
 
         # Create player
@@ -1083,6 +1118,16 @@ if __name__ == '__main__':
                 new_enemy = create_character()
             else:
                 new_enemy = create_random_enemy()
+
+            # Create player directory if needed
+            path = f'temp/{new_enemy.name}/'
+            if not os.path.exists(path):
+                os.mkdir(path)
+
+            # Save player data
+            file = open(f'{path}enemy.txt', 'w')
+            file.writelines(new_enemy.get_data())
+            file.close()
                 
             enemies.append(new_enemy)
 
@@ -1129,6 +1174,7 @@ if __name__ == '__main__':
                 print(f'{i} - {enemies[i].name}')
             
             index = int(input('\nQual inimigo você deseja remover: '))
+            shutil.rmtree('temp/' + enemies[index].name)
             enemies.remove(enemies[index])
 
             # Press any key to continue
@@ -1139,6 +1185,9 @@ if __name__ == '__main__':
             clear()
             print('Limpar Lista de Inimigos')
 
+            shutil.rmtree('temp/')
+            os.mkdir('temp/')
+            
             enemies.clear()
 
             # Press any key to continue
@@ -1225,6 +1274,7 @@ if __name__ == '__main__':
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
 
+        # Show inventories
         elif choice == 12:
             clear()
             print('Inventários\n')
@@ -1328,6 +1378,9 @@ if __name__ == '__main__':
                 # If all the enemies dies, stop combat
                 if not enemies:
                     break
+            
+            # Clear temporary files
+            shutil.rmtree('temp/')
 
             # Remove all temporary buffs, given by the abilities, and reset stamina
             remove_buffs(current_combat_abilities, players)
@@ -1335,7 +1388,7 @@ if __name__ == '__main__':
                       
         # Buy and sell system
         elif choice == 15:
-            commertiant(players)
+            commertiant(players, False)
 
         # Open a chest
         elif choice == 16:
@@ -1388,3 +1441,59 @@ if __name__ == '__main__':
 
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
+
+        # Add coins and XP
+        elif choice == 21:
+            clear()
+            print('Adicionar XP e Moedas\n')
+
+            add_coins = int(input('Moedas para adicionar: '))
+            add_xp = int(input('XP para adicionar: '))
+
+            print()
+
+            for i in range(len(players)):
+                print(f'{i} - {players[i].name}')
+
+            index = int(input('\nIndex do jogador [-1 para todos]: '))
+
+            if index == -1:
+                for player in players:
+                    player.coins += add_coins
+                    player.xp += add_xp
+            else:
+                players[index].coins += add_coins
+                players[index].xp += add_xp
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        # Set coins and XP
+        elif choice == 22:
+            clear()
+            print('Set de XP e Moedas\n')
+
+            xp = int(input('XP: '))
+            coins = int(input('Moedas: '))
+
+            print()
+
+            for i in range(len(players)):
+                print(f'{i} - {players[i].name}')
+
+            index = int(input('\nIndex do jogador [-1 para todos]: '))
+
+            if index == -1:
+                for player in players:
+                    player.coins = coins
+                    player.xp = xp
+            else:
+                players[index].coins = coins
+                players[index].xp = xp
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        # Add item to inventory
+        elif choice == 23:
+            commertiant(players, True)

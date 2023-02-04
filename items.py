@@ -108,7 +108,7 @@ big_market_items = [
     Item(name='Pedra de encantamento mágico de arma simples', description='Pedra usada para inflingir dano mágico em uma determinada arma', price=210),
     Item(name='Cimitarra', description='Inflinge 15 de Dano de Ataque e 3 de Dano Verdadeiro adicionais', price=150),
     Item(name='Cajado de Orvalho superior', description='Aumenta a Mana em 12 pontos e infinge 15 de Dano Mágico adicional', price=1200),
-    Item(name='Anel de Cura Superior', description='Aplica um cura de 15 HP no usuário em 5 de HP em cada turno. Ao final de cada combate, recupera 40 HP para todos os jogadores', price=500),
+    Item(name='Anel de Cura Superior', description='Aplica um cura de 15 HP no usuário em cada turno. Ao final de cada combate, recupera 40 HP para todos os jogadores', price=500),
     Item(name='Barraca de acampamento simples', description='Útil para longas viagens. Abriga 1 pessoa', price=120),
 ]
 
