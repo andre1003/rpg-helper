@@ -526,13 +526,14 @@ def loot_chest():
     min_coins = int(input('Mínimo de moedas: '))
     max_coins = int(input('Máximo de moedas: '))
 
-    # Get random number of coins
+    # Get random number of coins and ores
     coins = randint(min_coins, max_coins)
     ores = randint(1, 3)
 
     # Get number of loots that the chest will have
     percents = (coin_percent, item_percent, ore_percent, weed_percent)
-    loot_number = randint(1, 4)
+    maximum = sum(p > 0 for p in percents)
+    loot_number = randint(1, maximum)
 
     # Display it on screen
     print(f'\nO baú tem {loot_number} loots!\n')
@@ -564,23 +565,21 @@ def loot_chest():
 
             # Coins
             if index == 0:
-                print('O baú contem moedas!')
                 print(f'+{coins} moedas')
                 
             # Items
             elif index == 1:
-                print('O baú contem items!')
-                item = items.get_item_at_index(player.character_class, randint(0, 7))
-                print(f'+ {item}')
+                item = items.get_item_at_index(player.character_class)
+                print(f'+{item}')
 
             # Ore
             elif index == 2:
                 ore = items.ores[randint(0, len(items.ores) - 1)]
-                print(f'+ {ores} de {ore}')
+                print(f'+{ores} de {ore}')
 
             # Weed
             elif index == 3:
-                print('Erva de cura simples')
+                print('+1 Erva de cura simples')
 
     print(25*'=-')
 

@@ -1,5 +1,6 @@
 from utils import bcolors
 import os
+from random import randint
 
 
 class Item:
@@ -86,6 +87,35 @@ items = {
         Item(name='Escudo Médio', additional_ad_negation=5, additional_ap_negation=4, is_weapon=False),
     ],
 }
+
+
+loot_items = {
+    'Bárbaro': [
+        Item(name='', additional_attack_damage=0, stamina_cost=0, is_weapon=True),
+    ],
+
+
+    'Bardo': [
+        Item(name='', additional_attack_damage=0, stamina_cost=0, is_weapon=True),
+    ],
+    
+    
+    'Druida': [
+        Item(name='', additional_attack_damage=0, stamina_cost=0, is_weapon=True),
+    ],
+    
+    
+    'Mago': [
+        Item(name='', additional_attack_damage=0, stamina_cost=0, is_weapon=True),
+    ],
+    
+    
+    'Paladino': [
+        Item(name='', additional_attack_damage=0, stamina_cost=0, is_weapon=True),
+    ],
+}
+
+
 
 
 merchant_items = [
@@ -185,8 +215,8 @@ item_levels= (
 
 
 # Get player item at index
-def get_item_at_index(character_class:str , index: int):
-    return items[character_class][index]
+def get_item_at_index(character_class:str):
+    return loot_items[character_class][randint(0, len(loot_items[character_class]))]
 
 
 # Create an item
