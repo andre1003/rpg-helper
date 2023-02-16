@@ -445,6 +445,51 @@ def create_abilities(players: list):
                         if player.name in directory:
                             player.add_ability(ability)
 
+    abilities_path = 'abilities/'
+    if os.path.exists(abilities_path):
+        for item in os.listdir(abilities_path):
+            file = open(abilities_path + item, 'r')
+            content = file.readlines()
+            file.close()
+
+            # Configure ability content
+            for i in range(len(content)):
+                # Remove all '\n'
+                content[i] = content[i].replace('\n', '')
+
+                # Convert all needed content to integer
+                if (i > 0 and i < 10) or (i == 11) or (i == 13) or (i == 16):
+                    content[i] = int(content[i])
+
+            # Convert the needed content to boolean
+            if content[10] == 'True':
+                content[10] = True
+            else:
+                content[10] = False
+
+            # Convert the needed content to boolean
+            if content[12] == 'True':
+                content[12] = True
+            else:
+                content[12] = False
+
+            # Convert the needed content to boolean
+            if content[14] == 'True':
+                content[14] = True
+            else:
+                content[14] = False
+
+            # Convert the needed content to boolean
+            if content[15] == 'True':
+                content[15] = True
+            else:
+                content[15] = False
+
+            # Create the ability and add to abilities list
+            ability = Ability(content[0], content[1], content[2], content[3], content[4], content[5], content[6], content[7], content[8], content[9], content[10], content[11], content[12], content[13], content[14], content[15], content[16])
+            abilities.append(ability)
+
+
     # Return all abilities
     return abilities
 
@@ -984,7 +1029,18 @@ def create_ability():
 
     min_dice_value = int(input('Valor mínimo para castar a habilidade: '))
 
-    return Ability(name, health_cost, mana_cost, stamina_cost, additional_attack_damage, additional_ability_power, additional_true_damage, additional_health, additional_mana, additional_stamina, is_unic_use, cooldown, affect_other_player, number_of_enemies_affected, no_dice, is_attack, min_dice_value)
+    path = 'abilities/'
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+    ability = Ability(name, health_cost, mana_cost, stamina_cost, additional_attack_damage, additional_ability_power, additional_true_damage, additional_health, additional_mana, additional_stamina, is_unic_use, cooldown, affect_other_player, number_of_enemies_affected, no_dice, is_attack, min_dice_value)
+
+    name = ability.name.replace(' ','_')
+    file = open(f'{path}/{name}.txt', 'w')
+    file.writelines(ability.get_data())
+    file.close()
+
+    return ability
 
 
 # Show all players invetories
