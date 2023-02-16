@@ -1,0 +1,13 @@
+Cavalo treinado
+Consegue andar uma longa distância (100m) sem se cansar
+6000
+0
+0
+0
+0
+0
+0
+0
+0
+0
+False

@@ -1,0 +1,13 @@
+Barraca de acampamento simples
+Útil para longas viagens. Abriga 1 pessoa
+120
+0
+0
+0
+0
+0
+0
+0
+0
+0
+False

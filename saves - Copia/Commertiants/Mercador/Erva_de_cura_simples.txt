@@ -1,0 +1,13 @@
+Erva de cura simples
+Erva usada para fabricar poções de cura simples
+5
+0
+0
+0
+0
+0
+0
+0
+0
+0
+False

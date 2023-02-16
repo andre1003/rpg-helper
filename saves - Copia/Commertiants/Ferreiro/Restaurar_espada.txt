@@ -1,0 +1,13 @@
+Restaurar espada
+Restaura uma espada quebrada
+25
+0
+0
+0
+0
+0
+0
+0
+0
+0
+False

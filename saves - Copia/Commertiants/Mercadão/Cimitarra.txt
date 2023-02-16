@@ -1,0 +1,13 @@
+Cimitarra
+Inflinge 15 de Dano de Ataque e 3 de Dano Verdadeiro adicionais
+150
+0
+0
+0
+0
+0
+0
+0
+0
+0
+False

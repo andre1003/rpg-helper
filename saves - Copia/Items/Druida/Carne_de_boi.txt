@@ -1,0 +1,13 @@
+Carne de boi
+Recupera 25 HP e 25 de mana
+55
+0
+0
+0
+0
+0
+0
+0
+0
+0
+False

@@ -1,0 +1,17 @@
+Orbe Simples
+0
+15
+0
+0
+15
+5
+0
+0
+0
+False
+1
+False
+0
+False
+True
+3

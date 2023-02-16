@@ -619,16 +619,19 @@ def edit(all_characters: list):
 
 
 # Combat handler
-def combat(current_turn: int, players: list, enemies: list, current_combat_abilities: list):
+def combat(current_turn: int, players: list, enemies: list, current_combat_abilities: list, order: list):
     # Get all characters
     all_characters = players.copy() + enemies.copy()
 
     # Edit a character, if needed
     opt = 2
     while opt == 2:
-        opt = int(input('1 - Iniciar a Luta\n2 - Alterar o Status de Personagem\n\nSua Escolha: '))
+        opt = int(input('1 - Iniciar a Luta\n2 - Alterar o Status de Personagem\n3 - Pular Turno\n-2 - Sair do Combate\n\nSua Escolha: '))
         if opt == 2:
             edit(all_characters)
+
+        elif opt == 3:
+            return -1
 
         elif opt == -2:
             return -2
@@ -735,11 +738,21 @@ def combat(current_turn: int, players: list, enemies: list, current_combat_abili
         file.writelines(content)
         file.close()
 
+    remove_index = -1
+
     # If defender dies, remove it from the list
     if defender.health == 0:
+        for i in range(len(order)):
+            if defender.name == order[i][0]:
+                remove_index = i
+                break
+
         if defender in enemies:
             print(f'\n{bcolors.RED}{defender.name} morreu!{bcolors.ENDC}')
             shutil.rmtree('temp/' + defender.name)
+
+            
+
             enemies.remove(defender)
             del(defender)
 
@@ -762,6 +775,8 @@ def combat(current_turn: int, players: list, enemies: list, current_combat_abili
 
     # Press any key to continue
     input('\nPressione qualquer tecla para continuar...')
+
+    return remove_index
 
 
 # Assing an ability to a character
@@ -1312,6 +1327,10 @@ if __name__ == '__main__':
 
         # Combat
         elif choice == 14:
+            path = f'temp/'
+            if not os.path.exists(path):
+                os.mkdir(path)
+
             current_turn = 0
             current_combat_abilities = list()
 
@@ -1371,19 +1390,20 @@ if __name__ == '__main__':
 
 
                 # Combat handler
-                result = combat(current_turn, players, enemies, current_combat_abilities)
+                result = combat(current_turn, players, enemies, current_combat_abilities, order)
                 if result == -2:
                     break
+                elif result > 0:
+                    order.remove(order[result])
 
                 # Increase player order index
                 index += 1
 
                 # If all the enemies dies, stop combat
                 if not enemies:
+                    # Clear temporary files
+                    shutil.rmtree('temp/')
                     break
-            
-            # Clear temporary files
-            shutil.rmtree('temp/')
 
             # Remove all temporary buffs, given by the abilities, and reset stamina
             remove_buffs(current_combat_abilities, players)

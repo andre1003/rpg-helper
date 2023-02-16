@@ -1,0 +1,13 @@
+Cavalo de elite
+Consegue andar livremente sem se cansar (sem limite)
+50000
+0
+0
+0
+0
+0
+0
+0
+0
+0
+False

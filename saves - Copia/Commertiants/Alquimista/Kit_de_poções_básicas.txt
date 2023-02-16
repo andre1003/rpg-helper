@@ -1,0 +1,13 @@
+Kit de poções básicas
+Kit contendo 5 poções de cura simples e 5 poções de mana simples
+250
+0
+0
+0
+0
+0
+0
+0
+0
+0
+False

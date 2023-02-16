@@ -1,0 +1,13 @@
+Armadura de Prata Pesada
+
+-1
+0
+0
+0
+0
+0
+0
+5
+5
+0
+False

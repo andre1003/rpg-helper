@@ -1,0 +1,13 @@
+Restaurar cajado
+Restaura um cajado quebrado
+25
+0
+0
+0
+0
+0
+0
+0
+0
+0
+False
