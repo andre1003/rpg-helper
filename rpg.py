@@ -633,7 +633,7 @@ def loot_chest():
 
 
 # Edit a character
-def edit(all_characters: list):
+def edit(all_characters: list, option: int):
     print()
     print(25*'-=')
     print()
@@ -655,8 +655,12 @@ def edit(all_characters: list):
     ability_power = int(input('Adicionar Dano Mágico: '))
     true_damage = int(input('Adicionar Dano Verdadeiro: '))
 
-    character.buff_status(health, mana, stamina)
-    character.buff_damage(attack_damage, ability_power, true_damage)
+    if option == 1:
+        character.buff_status(health, mana, stamina)
+        character.buff_damage(attack_damage, ability_power, true_damage)
+    else:
+        character.edit_status(health, mana, stamina)
+        character.edit_damage(attack_damage, ability_power, true_damage)
 
     print()
     print(25*'-=')
@@ -673,7 +677,7 @@ def combat(current_turn: int, players: list, enemies: list, current_combat_abili
     while opt == 2:
         opt = int(input('1 - Iniciar a Luta\n2 - Alterar o Status de Personagem\n3 - Pular Turno\n-2 - Sair do Combate\n\nSua Escolha: '))
         if opt == 2:
-            edit(all_characters)
+            edit(all_characters, 1)
 
         elif opt == 3:
             return -1
@@ -1512,7 +1516,7 @@ if __name__ == '__main__':
             print('Editar Jogador\n')
 
             while True:
-                edit(players)
+                edit(players, 2)
                 opt = int(input('\nDeseja editar outro jogador? [1 - True/0 - False] ') or 0)
                 if opt == 0:
                     break

@@ -137,6 +137,26 @@ class Character:
         self.ability_power -= ability_power
         self.true_damage -= true_damage
 
+    # Edit status
+    def edit_status(self, health, mana, stamina):
+        self.base_health += health
+        self.base_mana += mana
+        self.base_stamina += stamina
+
+        self.health = self.base_health
+        self.mana = self.base_mana
+        self.stamina = self.base_stamina
+
+    # Edit damage
+    def edit_damage(self, attack_damage, ability_power, true_damage):
+        self.base_attack_damage += attack_damage
+        self.base_ability_power += ability_power
+        self.base_true_damage += true_damage
+
+        self.attack_damage = self.base_attack_damage
+        self.ability_power = self.base_ability_power
+        self.true_damage = self.base_true_damage
+
     # Add an ability to the player
     def add_ability(self, ability: Ability):
         self.character_abilities.append(ability)
