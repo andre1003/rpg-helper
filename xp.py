@@ -5,15 +5,20 @@ damage_multiplier = 0.155
 
 total_cost = xp
 
-ad = int(input('AD: '))
-ap = int(input('AP: '))
-td = int(input('TD: '))
+ad = int(input('AD: ') or 10)
+ap = int(input('AP: ') or 10)
+td = int(input('TD: ') or 5)
 
 print(f'XP inicial: {xp}')
 print(f'Multiplicador XP: {xp_multiplier}\n')
 
+level_to_check = int(input('Nível para checar: ')) - 1
 
-for i in range(99):
+print()
+print(25*'-=')
+print()
+
+for i in range(level_to_check):
     if i + 1 == 20:
         xp_multiplier -= 0.06
         damage_multiplier -= 0.06
@@ -24,12 +29,12 @@ for i in range(99):
         xp_multiplier -= 0.025
         damage_multiplier -= 0.025
 
-    if (i + 1) % 10 == 0:
-        print(f'XP do nível {i+1} para {i + 2}: {xp}')
-        print(f'Custo total de XP até o level {i + 2}: {total_cost}')
-        print(f'Dano de Ataque: {ad}')
-        print(f'Dano de Habilidade: {ap}')
-        print(f'Dano Verdadeiro: {td}\n')
+    #if (i + 1) % 10 == 0:
+    print(f'XP do nível {i+1} para {i + 2}: {xp}')
+    print(f'Custo total de XP até o level {i + 2}: {total_cost}')
+    print(f'Dano de Ataque: {ad}')
+    print(f'Dano de Habilidade: {ap}')
+    print(f'Dano Verdadeiro: {td}\n')
 
     xp += round(xp_multiplier * xp)
 
@@ -40,8 +45,11 @@ for i in range(99):
     if i + 1 < 99:
         total_cost += xp
 
+print(25*'-=')
+print()
+
 print(f'Custo total de XP: {total_cost}')
 print(f'Dano de Ataque total: {ad}')
 print(f'Dano de Habilidade total: {ap}')
 print(f'Dano Verdadeiro total: {td}')
-print(f'Dano Total Bruto: {ad + ap + td}')
+print(f'Dano Total Bruto: {ad + ap + td}\n')
