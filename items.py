@@ -1,6 +1,7 @@
 from utils import bcolors
 import os
 from random import randint
+import character
 
 
 class Item:
@@ -143,11 +144,14 @@ big_market_items = [
 ]
 
 blacksmith_items = [
-    Item(name='Restaurar espada', description='Restaura uma espada quebrada', price=25),
-    Item(name='Restaurar machado', description='Restaura um machado quebrado', price=25),
-    Item(name='Restaurar cajado', description='Restaura um cajado quebrado', price=25),
-    Item(name='Restaurar armadura', description='Restaura uma peça de armadura quebrada', price=30),
-    Item(name='Aprimorar escudo de Paladino', description='Aprimora o escudo de um Paladino até o nível Superior', price=500),
+    Item(name='Espada Curva Fortificada', description='', additional_attack_damage=7, stamina_cost=1, is_weapon=True, price=2500),
+    Item(name='Machado Grande Superior', description='', additional_attack_damage=15, stamina_cost=5, is_weapon=True, price=4000),
+    Item(name='Cajado de Ouro Simples', description='', additional_ability_power=5, stamina_cost=5, is_weapon=True, price=25000),
+    Item(name='Adaga Dracônica Superior', description='', additional_attack_damage=10, additional_ability_power=10, additional_true_damage=10, stamina_cost=4, is_weapon=True, price=25000),
+    Item(name='Selo de Dedo Real', description='', additional_attack_damage=25, additional_ability_power=25, stamina_cost=5, is_weapon=True, price=25000),
+    Item(name='Elmo de Prata Smaragdoriano Fortificado', description='', additional_ability_power=25, stamina_cost=4, is_weapon=True, price=25000),
+    Item(name='Peitoral de Prata Smaragdoriano Fortificado', description='', additional_ability_power=25, stamina_cost=4, is_weapon=True, price=25000),
+    Item(name='Grecas de Prata Smaragdoriana Fortificada', description='', additional_ability_power=25, stamina_cost=4, is_weapon=True, price=25000),
 ]
 
 stable_items = [
@@ -178,14 +182,14 @@ jewelry_items = [
 
 
 ores = [
-    'Minério de cobre',
-    'Minério de ferro',
-    'Minério de prata',
-    'Minério de ouro',
-    'Minério de diamante',
-    'Minério de rubi',
-    'Minério de esmeralda',
-    'Minério de safira',
+    Item(name='Minério de cobre', description='Deve ser refinado para ser utilizado', price=30),
+    Item(name='Minério de ferro', description='Deve ser refinado para ser utilizado', price=45),
+    Item(name='Minério de prata', description='Deve ser refinado para ser utilizado', price=60),
+    Item(name='Minério de ouro', description='Deve ser refinado para ser utilizado', price=95),
+    Item(name='Minério de diamante', description='Deve ser refinado para ser utilizado', price=175),
+    Item(name='Minério de rubi', description='Deve ser refinado para ser utilizado', price=250),
+    Item(name='Minério de esmeralda', description='Deve ser refinado para ser utilizado', price=390),
+    Item(name='Minério de safira', description='Deve ser refinado para ser utilizado', price=500),
 ]
 
 
@@ -199,7 +203,7 @@ merchants = (
     'Joalheiro'
 )
 
-item_levels= (
+item_levels = (
     'Simples',
     'Fortificado',
     'Superior',
@@ -301,6 +305,7 @@ def load_player_items():
 
         # Loop items
         for item in os.listdir(path + char_class + '/'):
+            print(item)
             # Get item raw content
             file = open(path + char_class + '/' + item, 'r')
             content = file.readlines()
@@ -465,6 +470,36 @@ def load_commertiant_items():
                 jewelry_items.append(new_item)
 
 
+# Apply items buffs
+def apply_items_buffs(players: list):
+    for player in players:
+        for item in items[player.character_class]:
+            if item.is_weapon:
+                continue
+
+            player.buff_status(item.additional_health, item.additional_mana, item.additional_stamina)
+
+            player.buff_damage(item.additional_attack_damage, item.additional_ability_power, item.additional_true_damage)
+
+            player.attack_damage_negation += item.additional_ad_negation
+            player.ability_power_negation += item.additional_ap_negation
+
+
+# Remove items buffs
+def remove_items_buffs(players: list):
+    for player in players:
+        for item in items[player.character_class]:
+            if item.is_weapon:
+                continue
+
+            player.debuff_status(item.additional_health, item.additional_mana, item.additional_stamina)
+
+            player.debuff_damage(item.additional_attack_damage, item.additional_ability_power, item.additional_true_damage)
+
+            player.attack_damage_negation -= item.additional_ad_negation
+            player.ability_power_negation -= item.additional_ap_negation
+
+
 # Save all items
 def save_items():
     save_player_items()
@@ -472,6 +507,7 @@ def save_items():
 
 
 # Load all items
-def load_items():
+def load_items(players: list):
     load_player_items()
-    load_commertiant_items()
+    #load_commertiant_items()
+    apply_items_buffs(players)

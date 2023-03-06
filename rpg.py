@@ -611,6 +611,7 @@ def loot_chest():
             # Coins
             if index == 0:
                 print(f'+{coins} moedas')
+                player.coins += coins
                 
             # Items
             elif index == 1:
@@ -620,7 +621,8 @@ def loot_chest():
             # Ore
             elif index == 2:
                 ore = items.ores[randint(0, len(items.ores) - 1)]
-                print(f'+{ores} de {ore}')
+                print(f'+{ores} de {ore.name}')
+                items.items[player.character_class].append(ore)
 
             # Weed
             elif index == 3:
@@ -641,26 +643,36 @@ def edit(all_characters: list, option: int):
     for i in range(len(all_characters)):
         print(f'{i} - {all_characters[i].name}')
 
-    option = int(input('\nQual personagem voce quer alterar: '))
+    option = int(input('\nQual personagem voce quer alterar: ') or -1)
+    if option == -1:
+        return
 
     character = all_characters[option]
 
     # Status
-    health = int(input('Adicionar Vida: '))
-    mana = int(input('Adicionar Mana: '))
-    stamina = int(input('Adicionar Stamina: '))
+    health = int(input(f'Adicionar Vida [{character.health} / {character.base_health}]: ') or 0)
+    mana = int(input(f'Adicionar Mana [{character.mana} / {character.base_mana}]: ') or 0)
+    stamina = int(input(f'Adicionar Stamina [{character.stamina} / {character.base_stamina}]: ') or 0)
 
     # Damage
-    attack_damage = int(input('Adicionar Dano de Ataque: '))
-    ability_power = int(input('Adicionar Dano Mágico: '))
-    true_damage = int(input('Adicionar Dano Verdadeiro: '))
+    attack_damage = int(input(f'Adicionar Dano de Ataque [{character.attack_damage} / {character.base_attack_damage}]: ') or 0)
+    ability_power = int(input(f'Adicionar Dano Mágico [{character.ability_power} / {character.base_ability_power}]: ') or 0)
+    true_damage = int(input(f'Adicionar Dano Verdadeiro [{character.true_damage} / {character.base_true_damage}]: ') or 0)
+
+    # Damage negation
+    ad_negation = int(input(f'Adicionar Negação Dano de Ataque [{character.attack_damage_negation}]: ') or 0)
+    ap_negation = int(input(f'Adicionar Negação Dano de Mágico [{character.ability_power_negation}]: ') or 0)
 
     if option == 1:
         character.buff_status(health, mana, stamina)
         character.buff_damage(attack_damage, ability_power, true_damage)
+
     else:
         character.edit_status(health, mana, stamina)
         character.edit_damage(attack_damage, ability_power, true_damage)
+
+    character.attack_damage_negation += ad_negation
+    character.ability_power_negation += ap_negation
 
     print()
     print(25*'-=')
@@ -907,6 +919,8 @@ def commertiant(players: list, no_charge: bool):
             commertiant_items = items.stable_items  
 
         # Alchemist
+
+        # Alchemist
         elif option == 6:
             print(25*'-=')
             print(f'\n{bcolors.GREEN}ALQUIMISTA{bcolors.ENDC}\n')
@@ -940,6 +954,7 @@ def commertiant(players: list, no_charge: bool):
                 if not no_charge:
                     players[opt].coins -= commertiant_items[option].price
                 items.items[players[opt].character_class].append(commertiant_items[option])
+                save(players)
                 print(f'{bcolors.CYAN}{commertiant_items[option].name}{bcolors.ENDC} adicionado ao inventário de {bcolors.GREEN}{players[opt].name}{bcolors.ENDC}')
 
             # Check if player want to keep buying
@@ -1068,6 +1083,9 @@ def show_inventories(players: list):
 
 # Save game data
 def save(players: list):
+    # Remove items buffs
+    items.remove_items_buffs(players)
+
     # Create the saves directory if needed
     if not os.path.exists('saves/'):
         os.mkdir('saves/')
@@ -1093,7 +1111,40 @@ def save(players: list):
 
     # Save items
     items.save_items()
-        
+
+
+# Level up system
+def level_up(players: list):
+    initial_xp = 200
+    xp_multiplier = 0.15
+    damage_multiplier = 0.15
+
+    for player in players:
+        if player.name == 'Celaena':
+            damage_multiplier = 0.153
+        elif player.name == 'Ryze' or player.name == 'Nikolag':
+            damage_multiplier = 0.155
+
+        level = int(input(f'Qual o nível de {player.name}: '))
+
+        for i in range(level):
+            if i + 1 == 20:
+                xp_multiplier -= 0.06
+                damage_multiplier -= 0.06
+            elif i + 1 == 50:
+                xp_multiplier -= 0.05
+                damage_multiplier -= 0.05
+            elif i + 1 == 80:
+                xp_multiplier -= 0.025
+                damage_multiplier -= 0.025
+
+            # Continue here...
+
+        #while player.xp >=
+
+
+
+
 
 # Clear screen
 def clear():
@@ -1158,7 +1209,7 @@ if __name__ == '__main__':
     abilities = create_abilities(players)
 
     # Load all items
-    items.load_items()
+    items.load_items(players)
 
     # Start app execution
     while(True):
@@ -1174,7 +1225,6 @@ if __name__ == '__main__':
         if choice == 0:
             clear()
             save(players)
-            shutil.rmtree('temp/')
             break
 
         # Create player
@@ -1190,6 +1240,12 @@ if __name__ == '__main__':
             clear()
 
             print('Criação de Inimigo\n')
+
+            # If there is no temp directory, create it
+            path = 'temp/'
+            if not os.path.exists(path):
+                os.mkdir(path)
+
             op = bool(input('Criação longa? [True/False]: '))
 
             if op:
@@ -1387,7 +1443,7 @@ if __name__ == '__main__':
 
         # Combat
         elif choice == 14:
-            path = f'temp/'
+            path = 'temp/'
             if not os.path.exists(path):
                 os.mkdir(path)
 
@@ -1515,12 +1571,18 @@ if __name__ == '__main__':
             clear()
             print('Editar Jogador\n')
 
+            # Remove items buffs
+            items.remove_items_buffs(players)
+
+            # Edit players
             while True:
                 edit(players, 2)
                 opt = int(input('\nDeseja editar outro jogador? [1 - True/0 - False] ') or 0)
                 if opt == 0:
                     break
 
+            # Apply items buffs
+            items.apply_items_buffs(players)
 
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')
