@@ -1186,7 +1186,9 @@ def options():
     f'20 - Editar jogadores\n'+
     f'21 - Adicionar moedas e XP\n'+
     f'22 - Definir moedas e XP\n'+
-    f'23 - Adicionar item\n\n'+
+    f'23 - Adicionar item\n'+
+    f'24 - Resetar atributos\n' +
+    f'25 - Recarregar inimigos (pasta temp)\n\n' +
     
 
     f'0  - Sair\n'
@@ -1210,6 +1212,7 @@ if __name__ == '__main__':
 
     # Load all items
     items.load_items(players)
+
 
     # Start app execution
     while(True):
@@ -1308,7 +1311,11 @@ if __name__ == '__main__':
                 print(f'{i} - {enemies[i].name}')
             
             index = int(input('\nQual inimigo você deseja remover: '))
-            shutil.rmtree('temp/' + enemies[index].name)
+
+            path = 'temp/' + enemies[index].name
+            if os.path.exists(path):
+                shutil.rmtree(path)
+
             enemies.remove(enemies[index])
 
             # Press any key to continue
@@ -1642,3 +1649,62 @@ if __name__ == '__main__':
         # Add item to inventory
         elif choice == 23:
             commertiant(players, True)
+
+        # Reset stats
+        elif choice == 24:
+            clear()
+            print('Resetar Atributos\n')
+
+            # Remove item buffs
+            items.remove_items_buffs(players)
+
+            # Check wich status should be reset
+            restore_health = int(input('Restaurar vida? [1 - True / 0 - False] (Padrão é False): ') or 0)
+            restore_mana = int(input('Restaurar mana? [1 - True / 0 - False] (Padrão é True): ') or 1)
+            restore_stamina = int(input('Restaurar stamina? [1 - True / 0 - False] (Padrão é True): ') or 1)
+
+            print('\nOs seguintes atributos serão resetados:\n')
+
+            if restore_health == 1:
+                print(f'{bcolors.RED}Vida{bcolors.ENDC}')
+
+            if restore_mana == 1:
+                print(f'{bcolors.CYAN}Mana{bcolors.ENDC}')
+
+            if restore_stamina == 1:
+                print(f'{bcolors.GREEN}Stamina{bcolors.ENDC}')
+
+            print()
+
+            # Reset status
+            for player in players:
+                if restore_health == 1:
+                    player.health = player.base_health
+
+                if restore_mana == 1:
+                    player.mana = player.base_mana
+
+                if restore_stamina == 1:
+                    player.stamina = player.base_stamina
+
+            # Reapply item buffs
+            items.apply_items_buffs(players)
+
+            print('\nAtributos resetados com sucesso!')
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        # Reload temp directory
+        elif choice == 25:
+            clear()
+            print('Carregar Inimigos\n')
+
+            enemies = create_enemies()
+
+            print('Inimigos existentes:\n')
+            for enemy in enemies:
+                print(enemy.name)
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
