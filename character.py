@@ -1,5 +1,6 @@
 from utils import bcolors
 from ability import Ability
+import items
 
 
 # Character class
@@ -78,19 +79,34 @@ class Character:
 
     # Show all player's details
     def show_details(self):
+        add_health = 0
+        add_mana = 0
+        add_stamina = 0
+        add_ad_neg = 0
+        add_ap_neg = 0
+
+        for item in items.items[self.character_class]:
+            add_health += item.additional_health
+            add_mana += item.additional_mana
+            add_stamina += item.additional_stamina
+
+            add_ad_neg += item.additional_ad_negation
+            add_ap_neg += item.additional_ap_negation
+
+
         print(f'Nome: {self.name}')
         print(f'Classe: {self.character_class}')
         print()
-        print(f'{bcolors.RED}Vida: {self.health}{bcolors.ENDC}')
-        print(f'{bcolors.CYAN}Mana: {self.mana}{bcolors.ENDC}')
-        print(f'{bcolors.GREEN}Stamina: {self.stamina}{bcolors.ENDC}')
+        print(f'{bcolors.RED}Vida: {self.health}\t({self.health - add_health} + {add_health}){bcolors.ENDC}')
+        print(f'{bcolors.CYAN}Mana: {self.mana}\t({self.mana - add_mana} + {add_mana}){bcolors.ENDC}')
+        print(f'{bcolors.GREEN}Stamina: {self.stamina}\t({self.stamina - add_stamina} + {add_stamina}){bcolors.ENDC}')
         print()
         print(f'{bcolors.RED}Dano de Ataque: {self.attack_damage}{bcolors.ENDC}')
         print(f'{bcolors.CYAN}Dano Mágico: {self.ability_power}{bcolors.ENDC}')
         print(f'Dano Verdadeiro: {self.true_damage}')
         print()
-        print(f'{bcolors.RED}Negação de Dano de Ataque: {self.attack_damage_negation}{bcolors.ENDC}')
-        print(f'{bcolors.CYAN}Negação de Dano Mágico: {self.ability_power_negation}{bcolors.ENDC}')
+        print(f'{bcolors.RED}Negação de Dano de Ataque: {self.attack_damage_negation }\t({self.attack_damage_negation - add_ad_neg} + {add_ad_neg}){bcolors.ENDC}')
+        print(f'{bcolors.CYAN}Negação de Dano Mágico: {self.ability_power_negation}\t({self.ability_power_negation - add_ap_neg} + {add_ap_neg}){bcolors.ENDC}')
         print()
         print(f'{bcolors.RED}Dados de Ataque: {self.attack_dice_number}d{self.attack_dice_value}{bcolors.ENDC}')
         print(f'{bcolors.CYAN}Dados de Defesa: {self.defense_dice_number}d{self.defense_dice_value}{bcolors.ENDC}')

@@ -1,3 +1,6 @@
+from random import randint
+
+
 # Terminal colors class
 class bcolors:
     HEADER = '\033[95m'
@@ -10,3 +13,8 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+
+# Roll a dice
+def d(number: int):
+    return randint(1, number)

@@ -144,14 +144,14 @@ big_market_items = [
 ]
 
 blacksmith_items = [
-    Item(name='Espada Curva Fortificada', description='', additional_attack_damage=7, stamina_cost=1, is_weapon=True, price=2500),
-    Item(name='Machado Grande Superior', description='', additional_attack_damage=15, stamina_cost=5, is_weapon=True, price=4000),
-    Item(name='Cajado de Ouro Simples', description='', additional_ability_power=5, stamina_cost=5, is_weapon=True, price=25000),
-    Item(name='Adaga Dracônica Superior', description='', additional_attack_damage=10, additional_ability_power=10, additional_true_damage=10, stamina_cost=4, is_weapon=True, price=25000),
-    Item(name='Selo de Dedo Real', description='', additional_attack_damage=25, additional_ability_power=25, stamina_cost=5, is_weapon=True, price=25000),
-    Item(name='Elmo de Prata Smaragdoriano Fortificado', description='', additional_ability_power=25, stamina_cost=4, is_weapon=True, price=25000),
-    Item(name='Peitoral de Prata Smaragdoriano Fortificado', description='', additional_ability_power=25, stamina_cost=4, is_weapon=True, price=25000),
-    Item(name='Grecas de Prata Smaragdoriana Fortificada', description='', additional_ability_power=25, stamina_cost=4, is_weapon=True, price=25000),
+    Item(name='Espada Curva Fortificada', description='Causa 7 de Dano de Ataque adicional ao custo de 1 de stamina', additional_attack_damage=7, stamina_cost=1, is_weapon=True, price=2000),
+    Item(name='Machado Grande Superior', description='Causa 15 de Dano de Ataque adicional ao custo de 5 de stamina', additional_attack_damage=15, stamina_cost=5, is_weapon=True, price=3000),
+    Item(name='Cajado de Ouro Simples', description='Causa 5 de Dano Mágico adicional ao custo de 5 de stamina', additional_ability_power=5, stamina_cost=5, is_weapon=True, price=2500),
+    Item(name='Adaga Dracônica Superior', description='Causa 10 de Dano de Ataque, Dano Mágico e Dano Verdadeiro adicional ao custo de 4 de stamina', additional_attack_damage=10, additional_ability_power=10, additional_true_damage=10, stamina_cost=4, is_weapon=True, price=23000),
+    Item(name='Selo de Dedo Real', description='Causa 25 de Dano de Ataque e Dano Mágico adicional ao custo de 5 de stamina', additional_attack_damage=25, additional_ability_power=25, stamina_cost=5, is_weapon=True, price=20000),
+    Item(name='Elmo de Prata Smaragdoriano Fortificado', description='Adiciona 20 de Negação de Dano de Ataque', additional_ad_negation=20, is_weapon=False, price=9000),
+    Item(name='Peitoral de Prata Smaragdoriano Fortificado', description='Adiciona 25 de Negação de Dano de Ataque e Negação de Dano Mágico', additional_ad_negation=25, additional_ap_negation=25, is_weapon=False, price=18000),
+    Item(name='Grevas de Prata Smaragdoriana Fortificada', description='Adiciona 15 de Negação de Dano de Ataque', additional_ad_negation=15, is_weapon=False, price=7500),
 ]
 
 stable_items = [
