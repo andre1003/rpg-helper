@@ -12,7 +12,6 @@ from creation import *
 
 
 
-
 # Define turn order
 def define_order(players: list, enemies: list):
     # Get all players' names
@@ -410,22 +409,34 @@ def level_up(players: list):
         elif player.name == 'Ryze' or player.name == 'Nikolag':
             damage_multiplier = 0.155
 
-        level = int(input(f'Qual o nível de {player.name}: '))
+        level = int(input(f'\nQual o nível de {player.name}: '))
 
-        for i in range(level):
-            if i + 1 == 20:
-                xp_multiplier -= 0.06
+        file = open('xp-cost.txt', 'r')
+        content = file.readlines()
+        file.close()
+
+        content = [int(i) for i in content]
+
+        while player.xp >= content[level-1]:
+            player.xp -= content[level-1]
+            level += 1
+
+            if 50 > level >= 20:
                 damage_multiplier -= 0.06
-            elif i + 1 == 50:
-                xp_multiplier -= 0.05
+
+            elif 80 > level >= 50:
                 damage_multiplier -= 0.05
-            elif i + 1 == 80:
-                xp_multiplier -= 0.025
+
+            elif level >= 80:
                 damage_multiplier -= 0.025
 
-            # Continue here...
+            player.attack_damage += round(damage_multiplier * player.attack_damage)
+            player.ability_power += round(damage_multiplier * player.ability_power)
+            player.true_damage += round(damage_multiplier * player.true_damage)
 
-        #while player.xp >=
+        print(f'{bcolors.CYAN}{player.name}{bcolors.ENDC} upou para o nível {bcolors.GREEN}{level}{bcolors.ENDC}')
+
+        save(players)
 
 
 # Clear screen
@@ -987,6 +998,17 @@ if __name__ == '__main__':
             print('Inimigos existentes:\n')
             for enemy in enemies:
                 print(enemy.name)
+
+            # Press any key to continue
+            input('\nPressione qualquer tecla para continuar...')
+
+        elif choice == 26:
+            clear()
+            print('Carregar Inimigos')
+
+            items.remove_items_buffs(players)
+            level_up(players)
+            items.apply_items_buffs(players)
 
             # Press any key to continue
             input('\nPressione qualquer tecla para continuar...')

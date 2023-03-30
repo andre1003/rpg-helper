@@ -12,13 +12,17 @@ td = int(input('TD: ') or 5)
 print(f'XP inicial: {xp}')
 print(f'Multiplicador XP: {xp_multiplier}\n')
 
-level_to_check = int(input('Nível para checar: ')) - 1
+level_to_check = int(input('Nível para checar (padrão é 100): ') or 100) - 1
 
 print()
 print(25*'-=')
 print()
 
+xp_cost = list()
+
 for i in range(level_to_check):
+    xp_cost.append(xp)
+
     if i + 1 == 20:
         xp_multiplier -= 0.06
         damage_multiplier -= 0.06
@@ -53,3 +57,14 @@ print(f'Dano de Ataque total: {ad}')
 print(f'Dano de Habilidade total: {ap}')
 print(f'Dano Verdadeiro total: {td}')
 print(f'Dano Total Bruto: {ad + ap + td}\n')
+
+# Save xp cost
+content = ''
+for cost in xp_cost:
+    content += str(cost)
+    if cost != xp_cost[-1]:
+        content += '\n'
+
+file = open('xp-cost.txt', 'w')
+file.writelines(content)
+file.close()
