@@ -380,11 +380,19 @@ def create_ability():
 
 # Show all players invetories
 def show_inventories(players: list):
+    file = open('xp-cost.txt', 'r')
+    xp_costs = file.readlines()
+    file.close()
+
+    file = open('level.txt', 'r')
+    level = int(file.readlines()[0])
+    file.close()
+
     # Loop players
     for player in players:
         # Display player name, coins and XP
         print(f'Inventário de {bcolors.GREEN}{player.name}{bcolors.ENDC}\n')
-        print(f'\t{bcolors.CYAN}XP: {player.xp}{bcolors.ENDC}\n\t{bcolors.YELLOW}Moedas: {player.coins}{bcolors.ENDC}\n')
+        print(f'\t{bcolors.CYAN}XP: {player.xp} / {xp_costs[level - 1]}{bcolors.ENDC}\n\t{bcolors.YELLOW}Moedas: {player.coins}{bcolors.ENDC}\n')
 
         # Loop player items, displaying each one of them
         for item in items.items[player.character_class]:
@@ -434,7 +442,15 @@ def level_up(players: list):
             player.ability_power += round(damage_multiplier * player.ability_power)
             player.true_damage += round(damage_multiplier * player.true_damage)
 
+            player.health += round(damage_multiplier * player.health)
+            player.mana += round(damage_multiplier * player.mana)
+            player.stamina += round(damage_multiplier * player.stamina)
+
         print(f'{bcolors.CYAN}{player.name}{bcolors.ENDC} upou para o nível {bcolors.GREEN}{level}{bcolors.ENDC}')
+
+        file = open('level.txt', 'w')
+        file.write(str(level))
+        file.close()
 
         save(players)
 
@@ -481,7 +497,8 @@ def options():
     f'22 - Definir moedas e XP\n'+
     f'23 - Adicionar item\n'+
     f'24 - Resetar atributos\n' +
-    f'25 - Recarregar inimigos (pasta temp)\n\n' +
+    f'25 - Recarregar inimigos (pasta temp)\n' +
+    f'26 - Subir de Nível\n\n' +
     
 
     f'0  - Sair\n'
@@ -1004,7 +1021,7 @@ if __name__ == '__main__':
 
         elif choice == 26:
             clear()
-            print('Carregar Inimigos')
+            print('Subir de Nível')
 
             items.remove_items_buffs(players)
             level_up(players)
