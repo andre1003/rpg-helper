@@ -228,8 +228,32 @@ def create_item():
     # Item info
     name = input('Insira o nome do item: ')
     description = input('Insira a descrição do item: ')
-    price = int(input('Insira o valor do item: '))
-    item = Item(name=name, description=description, price=price)
+    price = int(input('Insira o valor do item [Enter para 0]: ') or 0)
+    
+
+    additional_health = int(input('Valor da Vida adicional: ') or 0)
+    additional_mana = int(input('Valor da Mana adicional: ') or 0)
+    additional_stamina = int(input('Valor da Stamina adicional: ') or 0)
+
+    additional_attack_damage = int(input('Valor do Dano de Ataque adicional: ') or 0)
+    additional_ability_power = int(input('Valor do Dano Mágico adicional: ') or 0)
+    additional_true_damage = int(input('Valor Dano Verdadeiro adicional: ') or 0)
+
+    additional_ad_negation = int(input('Valor Negação de Dano de Ataque adicional: ') or 0)
+    additional_ap_negation = int(input('Valor Negação de Dano Mágico adicional: ') or 0)
+
+    stamina_cost = int(input('Valor do custo de stamina: ') or 0)
+
+    is_weapon = True if int(input('É uma arma? [1 - True/0 - False]') or 0) == 1 else False
+
+    item = Item(
+        name=name, description=description, price=price,
+        additional_health=additional_health, additional_mana=additional_mana, additional_stamina=additional_stamina,
+        additional_attack_damage=additional_attack_damage, additional_ability_power=additional_ability_power, additional_true_damage=additional_true_damage,
+        additional_ad_negation=additional_ad_negation, additional_ap_negation=additional_ap_negation,
+        stamina_cost=stamina_cost,
+        is_weapon=is_weapon
+    )
 
     print()
 
@@ -417,6 +441,10 @@ def load_commertiant_items():
     for commertiant in merchants:
         # Loop all items
         for item in os.listdir(path + commertiant):
+            # If the item path is a directory, continue
+            if os.path.isdir(path + commertiant + f'/{item}'):
+                continue
+
             # Get item raw content
             file = open(path + commertiant + f'/{item}', 'r')
             content = file.readlines()
@@ -509,5 +537,5 @@ def save_items():
 # Load all items
 def load_items(players: list):
     load_player_items()
-    #load_commertiant_items()
+    load_commertiant_items()
     apply_items_buffs(players)

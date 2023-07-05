@@ -257,7 +257,7 @@ def commertiant(players: list, no_charge: bool):
             index += 1
 
         # Check if any player wants to buy an item
-        option = int(input('\nQual item o jogador deseja adicionar [-1 para voltar]: '))
+        option = int(input('\nQual item o jogador deseja adicionar [-1 para voltar]: ') or -1)
         if option != -1:
             print()
             for i in range(len(players)):
